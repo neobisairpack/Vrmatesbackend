@@ -37,6 +37,7 @@ ALLOWED_HOSTS = ['167.172.178.135']
 INSTALLED_APPS = [
     # apps
     'users.apps.UsersConfig',
+    'services.apps.ServicesConfig',
 
     # rest-framework
     'rest_framework',

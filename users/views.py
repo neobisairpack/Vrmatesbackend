@@ -11,9 +11,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.generics import RetrieveUpdateAPIView
 
-from .models import MyUser
+from .models import MyUser, Rating
 from .tokens import account_activation_token
-from .serializers import RegistrationSerializer, LoginSerializer, UserSerializer
+from .serializers import RegistrationSerializer, LoginSerializer, UserSerializer, RatingSerializer
 
 
 def activate(request, uid64, token):
@@ -90,3 +90,13 @@ class UserRetrieveUpdateAPIView(RetrieveUpdateAPIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class RatingAPIView(APIView):
+    permission_classes = (IsAuthenticated, )
+    serializer_class = RatingSerializer
+
+    def get(self):
+        ratings = Rating.objects.all()
+        serializer = RatingSerializer(ratings, many=True)
+        return Response(serializer.data)

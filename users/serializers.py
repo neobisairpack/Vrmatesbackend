@@ -3,7 +3,7 @@ import datetime
 from rest_framework import serializers
 from django.contrib.auth import authenticate
 
-from .models import MyUser
+from .models import MyUser, Rating
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
@@ -124,3 +124,9 @@ class UserSerializer(serializers.ModelSerializer):
 
         instance.save()
         return instance
+
+
+class RatingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Rating
+        fields = ['user', 'rating']
