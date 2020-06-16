@@ -2,6 +2,10 @@ import jwt
 
 from django.db import models
 from django.conf import settings
+from django.db.models import Avg
+from django.dispatch import receiver
+from django.db.models.signals import post_save
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from datetime import datetime, timedelta
 
@@ -35,7 +39,7 @@ class MyUserManager(BaseUserManager):
         return user
 
 
-class MyUser(AbstractBaseUser, PermissionsMixin):
+class User(AbstractBaseUser, PermissionsMixin):
     USER_GENDER = (
         ('Male', 'Male'),
         ('Female', 'Female'),
@@ -49,11 +53,12 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
     gender = models.CharField(max_length=16, choices=USER_GENDER)
     phone = models.CharField(max_length=64, unique=True)
     country = models.CharField(max_length=128)
-    zip = models.CharField(max_length=32)
+    zip_code = models.CharField(max_length=32)
     state = models.CharField(max_length=128)
     city = models.CharField(max_length=128)
     address = models.CharField(max_length=128)
-    image = models.ImageField()
+    image = models.ImageField(null=True, blank=True)
+    points = models.IntegerField(default=20)
     rate = models.FloatField(default=0.0)
     is_admin = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
@@ -62,8 +67,8 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = ['email', ]
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username', ]
 
     objects = MyUserManager()
 
@@ -90,5 +95,22 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
 
 
 class Rating(models.Model):
-    user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
-    rating = models.FloatField()
+    requester = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='give_rate')
+    provider = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='receive_rate')
+    rating = models.FloatField(validators=(MinValueValidator(1.0), MaxValueValidator(5.0)))
+    text = models.TextField(max_length=512)
+    date = models.DateField(auto_now_add=True)
+
+
+class AvgRating(models.Model):
+    user = models.ForeignKey('users.User', on_delete=models.CASCADE)
+    avg_rating = models.FloatField()
+
+
+@receiver(post_save, sender=Rating)
+def save_user_rating(sender, instance, created, **kwargs):
+    avg_rating, created = AvgRating.objects.get_or_create()
+    if avg_rating.user.username == instance.provider.username:
+        avg_rating.avg_rating = instance.rating
+        avg_rating.save()
+

@@ -4,7 +4,7 @@ from django.conf import settings
 
 from rest_framework import authentication, exceptions
 
-from .models import MyUser
+from .models import User
 
 
 class JWTAuthentication(authentication.BaseAuthentication):
@@ -39,8 +39,8 @@ class JWTAuthentication(authentication.BaseAuthentication):
             raise exceptions.AuthenticationFailed(msg)
 
         try:
-            user = MyUser.objects.get(pk=payload['id'])
-        except MyUser.DoesNotExist:
+            user = User.objects.get(pk=payload['id'])
+        except User.DoesNotExist:
             msg = 'No user matching this token was found.'
             raise exceptions.AuthenticationFailed(msg)
 

@@ -3,7 +3,7 @@ import datetime
 from rest_framework import serializers
 from django.contrib.auth import authenticate
 
-from .models import MyUser, Rating
+from .models import User
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
@@ -23,17 +23,17 @@ class RegistrationSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        model = MyUser
+        model = User
         fields = [
             'id', 'first_name', 'last_name', 'email', 'birthday', 'gender', 'phone',
-            'address', 'zip', 'country', 'city', 'state', 'password', 'password2', 'token'
+            'address', 'zip_code', 'country', 'city', 'state', 'password', 'password2', 'token'
         ]
         extra_kwargs = {
             'password': {'write_only': True}
         }
 
     def create(self, validated_data):
-        account = MyUser(
+        account = User(
             first_name=self.validated_data['first_name'],
             last_name=self.validated_data['last_name'],
             email=self.validated_data['email'],
@@ -41,7 +41,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
             gender=self.validated_data['gender'],
             phone=self.validated_data['phone'],
             address=self.validated_data['address'],
-            zip=self.validated_data['zip'],
+            zip_code=self.validated_data['zip_code'],
             country=self.validated_data['country'],
             city=self.validated_data['city'],
             state=self.validated_data['state']
@@ -103,15 +103,15 @@ class UserSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        model = MyUser
+        model = User
         fields = [
-            'first_name', 'last_name', 'email', 'birthday', 'age', 'gender',
-            'phone', 'address', 'zip', 'country', 'city', 'state', 'password', 'token'
+            'first_name', 'last_name', 'email', 'birthday', 'age', 'gender', 'phone',
+            'address', 'zip_code', 'country', 'city', 'state', 'points', 'password', 'token'
         ]
         read_only_fields = ['token', ]
 
     def get_age(self, instance):
-        return datetime.datetime.now().year - instance.birthday.year
+        return datetime.date.today().year - instance.birthday.year
 
     def update(self, instance, validated_data):
         password = validated_data.pop('password', None)
@@ -124,9 +124,3 @@ class UserSerializer(serializers.ModelSerializer):
 
         instance.save()
         return instance
-
-
-class RatingSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Rating
-        fields = ['user', 'rating']

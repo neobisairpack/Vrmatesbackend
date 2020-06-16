@@ -11,16 +11,16 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.generics import RetrieveUpdateAPIView
 
-from .models import MyUser, Rating
+from .models import User
 from .tokens import account_activation_token
-from .serializers import RegistrationSerializer, LoginSerializer, UserSerializer, RatingSerializer
+from .serializers import RegistrationSerializer, LoginSerializer, UserSerializer
 
 
 def activate(request, uid64, token):
     try:
         uid = force_text(urlsafe_base64_decode(uid64))
-        user = MyUser.objects.get(pk=uid)
-    except (TypeError, ValueError, OverflowError, MyUser.DoesNotExist):
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
 
     if user is not None and account_activation_token.check_token(user, token):
@@ -79,7 +79,8 @@ class UserRetrieveUpdateAPIView(RetrieveUpdateAPIView):
     serializer_class = UserSerializer
 
     def retrieve(self, request, *args, **kwargs):
-        serializer = self.serializer_class(request.user)
+        users = User.objects.all()
+        serializer = self.serializer_class(users, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def update(self, request, *args, **kwargs):
@@ -90,13 +91,3 @@ class UserRetrieveUpdateAPIView(RetrieveUpdateAPIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-class RatingAPIView(APIView):
-    permission_classes = (IsAuthenticated, )
-    serializer_class = RatingSerializer
-
-    def get(self):
-        ratings = Rating.objects.all()
-        serializer = RatingSerializer(ratings, many=True)
-        return Response(serializer.data)
