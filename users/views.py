@@ -13,6 +13,7 @@ from rest_framework.generics import RetrieveUpdateAPIView
 
 from .models import User
 from .tokens import account_activation_token
+from .permissions import IsOwnerOrReadOnly
 from .serializers import RegistrationSerializer, LoginSerializer, UserSerializer
 
 
@@ -75,11 +76,12 @@ class LoginAPIView(APIView):
 
 
 class UserRetrieveUpdateAPIView(RetrieveUpdateAPIView):
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (IsOwnerOrReadOnly, )
     serializer_class = UserSerializer
+    queryset = User.objects.all()
 
     def retrieve(self, request, *args, **kwargs):
-        users = User.objects.all()
+        users = self.queryset.all()
         serializer = self.serializer_class(users, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 

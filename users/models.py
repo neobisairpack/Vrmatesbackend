@@ -2,7 +2,7 @@ import jwt
 
 from django.db import models
 from django.conf import settings
-from django.db.models import Avg
+from django.db.models import Count
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -93,6 +93,22 @@ class User(AbstractBaseUser, PermissionsMixin):
         }, settings.SECRET_KEY, algorithm='HS256')
         return token.decode('utf-8')
 
+    def rating_count(self):
+        ratings = Rating.objects.filter(provider=self)
+        return len(ratings)
+
+    def avg_rating(self):
+        summary = 0
+        ratings = Rating.objects.filter(provider=self)
+
+        for rating in ratings:
+            summary += rating.rating
+
+        if len(ratings) > 0:
+            return summary / len(ratings)
+        else:
+            return ZeroDivisionError
+
 
 class Rating(models.Model):
     requester = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='give_rate')
@@ -107,10 +123,10 @@ class AvgRating(models.Model):
     avg_rating = models.FloatField()
 
 
-@receiver(post_save, sender=Rating)
-def save_user_rating(sender, instance, created, **kwargs):
-    avg_rating, created = AvgRating.objects.get_or_create()
-    if avg_rating.user.username == instance.provider.username:
-        avg_rating.avg_rating = instance.rating
-        avg_rating.save()
+# @receiver(post_save, sender=Rating)
+# def save_user_rating(sender, instance, created, **kwargs):
+#     avg_rating, created = AvgRating.objects.get_or_create()
+#     if avg_rating.user.username == instance.provider.username:
+#         avg_rating.avg_rating = instance.rating
+#         avg_rating.save()
 
