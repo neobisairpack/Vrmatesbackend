@@ -123,10 +123,10 @@ class AvgRating(models.Model):
     avg_rating = models.FloatField()
 
 
-# @receiver(post_save, sender=Rating)
-# def save_user_rating(sender, instance, created, **kwargs):
-#     avg_rating, created = AvgRating.objects.get_or_create()
-#     if avg_rating.user.username == instance.provider.username:
-#         avg_rating.avg_rating = instance.rating
-#         avg_rating.save()
+@receiver(post_save, sender=Rating)
+def save_user_rating(sender, instance, created, **kwargs):
+    avg_rating, created = AvgRating.objects.get_or_create()
+    if avg_rating.user.username == instance.provider.username:
+        avg_rating.avg_rating = instance.rating
+        avg_rating.save()
 
