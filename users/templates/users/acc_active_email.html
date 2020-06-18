@@ -1,9 +1,10 @@
 {% autoescape off %}
-Hi {{ user.username }},
-Please click on the link to confirm your registration.
-==========
-Здравствуйте {{ user.username }}
-Пожалуйста, кликните на ссылку чтобы подтвердить регистрацию.
+Dear, { user.first_name },
 
-http://{{ domain }}{% url 'users:activate' uid64=uid token=token %}
+Welcome to Vrmates! We are honored and pleased to see you as a member of our community.
+We hope you will have the best experience using our platform.
+verify your e-mail by clicking http://{{ domain }}{% url 'users:activate' uid64=uid token=token %}
+
+Best Regards,
+Vrmates Team
 {% endautoescape %}

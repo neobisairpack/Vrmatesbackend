@@ -9,12 +9,12 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.generics import RetrieveUpdateAPIView
+from rest_framework.generics import RetrieveUpdateAPIView, UpdateAPIView
 
 from .models import User
 from .tokens import account_activation_token
 from .permissions import IsOwnerOrReadOnly
-from .serializers import RegistrationSerializer, LoginSerializer, UserSerializer
+from .serializers import RegistrationSerializer, LoginSerializer, UserSerializer, ChangeUserPasswordSerializer
 
 
 def activate(request, uid64, token):
@@ -76,7 +76,7 @@ class LoginAPIView(APIView):
 
 
 class UserRetrieveUpdateAPIView(RetrieveUpdateAPIView):
-    permission_classes = (IsOwnerOrReadOnly, )
+    permission_classes = (IsAuthenticated, )
     serializer_class = UserSerializer
     queryset = User.objects.all()
 
@@ -93,3 +93,32 @@ class UserRetrieveUpdateAPIView(RetrieveUpdateAPIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ChangeUserPasswordUpdateAPIView(UpdateAPIView):
+    permission_classes = (IsOwnerOrReadOnly, )
+    model = User
+    serializer_class = ChangeUserPasswordSerializer
+
+    def get_object(self):
+        obj = self.request.user
+        return obj
+
+    def update(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        serializer = self.get_serializer(data=request.data)
+
+        if serializer.is_valid():
+            if not self.object.check_password(serializer.data.get('old_password')):
+                return Response({'old_password': ['Wrong password.']}, status=status.HTTP_400_BAD_REQUEST)
+            self.object.set_password(serializer.data.get('new_password'))
+            self.object.save()
+            response = {
+                'status': 'Success',
+                'code': status.HTTP_200_OK,
+                'message': 'Password successfully updated',
+                'data': []
+            }
+
+            return Response(response)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

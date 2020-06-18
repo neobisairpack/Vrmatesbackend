@@ -1,13 +1,16 @@
 import jwt
-
+from django.core.mail import EmailMessage
 from django.db import models
-from django.conf import settings
-from django.db.models import Count
-from django.dispatch import receiver
-from django.db.models.signals import post_save
-from django.core.validators import MaxValueValidator, MinValueValidator
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from datetime import datetime, timedelta
+from django.conf import settings
+from django.dispatch import receiver
+from django.core.paginator import Paginator
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db.models.signals import post_save
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.template.loader import render_to_string
+
+from services import models as service_models
 
 
 class MyUserManager(BaseUserManager):
@@ -58,8 +61,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     city = models.CharField(max_length=128)
     address = models.CharField(max_length=128)
     image = models.ImageField(null=True, blank=True)
-    points = models.IntegerField(default=20)
-    rate = models.FloatField(default=0.0)
+    points = models.PositiveIntegerField(default=20)
     is_admin = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
@@ -107,7 +109,43 @@ class User(AbstractBaseUser, PermissionsMixin):
         if len(ratings) > 0:
             return summary / len(ratings)
         else:
-            return ZeroDivisionError
+            return 0
+
+    def avg_rating_last_ten(self):
+        ratings = Rating.objects.filter(provider=self).order_by('-id')
+
+        try:
+            paginator = Paginator(ratings, 10)
+            last_ten_ratings = paginator.page(1).object_list
+
+            return sum(rating.rating for rating in last_ten_ratings) / len(last_ten_ratings)
+
+        except ZeroDivisionError:
+            return 0
+
+    def canceled_posts_count(self):
+        service = service_models.Service.objects.filter(requester=self, status='Canceled').count()
+        hosting = service_models.Hosting.objects.filter(requester=self, status='Canceled').count()
+        return service + hosting
+
+    avg_rating.short_description = 'Average rating'
+    rating_count.short_description = 'Rating count'
+    avg_rating_last_ten.short_description = 'Last ten'
+    canceled_posts_count.short_description = 'Canceled posts'
+
+
+@receiver(post_save, sender=User)
+def banned_notifications(sender, instance, created, **kwargs):
+    if not instance.is_active:
+        mail_subject = 'Your account has been banned | Vrmates team'
+        message = render_to_string('users/account_ban.html', {
+            'user': instance.first_name
+        })
+        to_email = instance.email
+        email = EmailMessage(
+            mail_subject, message, to=[to_email]
+        )
+        email.send()
 
 
 class Rating(models.Model):
@@ -116,17 +154,3 @@ class Rating(models.Model):
     rating = models.FloatField(validators=(MinValueValidator(1.0), MaxValueValidator(5.0)))
     text = models.TextField(max_length=512)
     date = models.DateField(auto_now_add=True)
-
-
-class AvgRating(models.Model):
-    user = models.ForeignKey('users.User', on_delete=models.CASCADE)
-    avg_rating = models.FloatField()
-
-
-@receiver(post_save, sender=Rating)
-def save_user_rating(sender, instance, created, **kwargs):
-    avg_rating, created = AvgRating.objects.get_or_create()
-    if avg_rating.user.username == instance.provider.username:
-        avg_rating.avg_rating = instance.rating
-        avg_rating.save()
-

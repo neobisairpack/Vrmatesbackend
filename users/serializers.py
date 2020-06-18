@@ -25,7 +25,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
-            'id', 'first_name', 'last_name', 'email', 'birthday', 'gender', 'phone',
+            'id', 'first_name', 'last_name', 'username', 'email', 'birthday', 'gender', 'phone',
             'address', 'zip_code', 'country', 'city', 'state', 'password', 'password2', 'token'
         ]
         extra_kwargs = {
@@ -36,6 +36,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
         account = User(
             first_name=self.validated_data['first_name'],
             last_name=self.validated_data['last_name'],
+            username=self.validated_data['username'],
             email=self.validated_data['email'],
             birthday=self.validated_data['birthday'],
             gender=self.validated_data['gender'],
@@ -80,12 +81,7 @@ class LoginSerializer(serializers.Serializer):
 
         if user is None:
             raise serializers.ValidationError(
-                'A user with this email and password was not found.'
-            )
-
-        if not user.is_active:
-            raise serializers.ValidationError(
-                'This user has been deactivated.'
+                'A user with this email and password was not found or has been banned.'
             )
 
         return {
@@ -105,13 +101,18 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
-            'first_name', 'last_name', 'email', 'birthday', 'age', 'gender', 'phone', 'address', 'zip_code',
-            'country', 'city', 'state', 'points', 'rating_count', 'avg_rating', 'password', 'token'
+            'first_name', 'last_name', 'username', 'email', 'birthday', 'age', 'gender',
+            'phone', 'address', 'zip_code', 'country', 'city', 'state',
+            'points', 'rating_count', 'avg_rating', 'avg_rating_last_ten', 'password', 'token'
         ]
         read_only_fields = ['token', ]
 
     def get_age(self, instance):
         return datetime.date.today().year - instance.birthday.year
+
+    def points_validation(self, instance):
+        if instance.points < 20:
+            return "You have no points"
 
     def update(self, instance, validated_data):
         password = validated_data.pop('password', None)
@@ -124,3 +125,9 @@ class UserSerializer(serializers.ModelSerializer):
 
         instance.save()
         return instance
+
+
+class ChangeUserPasswordSerializer(serializers.Serializer):
+    model = User
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)

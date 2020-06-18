@@ -56,7 +56,7 @@ AUTH_USER_MODEL = 'users.User'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        # 'users.backends.JWTAuthentication',
+        'users.backends.JWTAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ),
     'EXCEPTION_HANDLER': 'users.exceptions.user_exception_handler',
