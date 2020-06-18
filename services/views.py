@@ -5,17 +5,22 @@ from rest_framework.exceptions import ParseError
 from rest_framework.permissions import IsAuthenticated
 
 from .models import Service, Hosting
-from .serializers import ServiceSerializer, HostingSerializer
+from .serializers import (
+    ServiceSerializer,
+    ServiceReadableSerializer,
+    HostingSerializer,
+    HostingReadableSerializer
+)
 
 
 class ServiceViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated, )
-    queryset = Service.objects.all()
+    queryset = Service.objects.filter(is_checked=True)
     serializer_class = ServiceSerializer
 
-    def get(self):
+    def list(self, request, *args, **kwargs):
         service = self.queryset.all()
-        serializer = self.serializer_class(service, many=True)
+        serializer = ServiceReadableSerializer(service, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
@@ -40,12 +45,12 @@ class ServiceViewSet(viewsets.ModelViewSet):
 
 class HostingViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated, )
-    queryset = Hosting.objects.all()
+    queryset = Hosting.objects.filter(is_checked=True)
     serializer_class = HostingSerializer
 
-    def get(self):
+    def list(self, request, *args, **kwargs):
         hosting = self.queryset.all()
-        serializer = self.serializer_class(hosting, many=True)
+        serializer = HostingReadableSerializer(hosting, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):

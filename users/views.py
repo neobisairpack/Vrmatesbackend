@@ -117,7 +117,6 @@ class ChangeUserPasswordUpdateAPIView(UpdateAPIView):
                 'status': 'Success',
                 'code': status.HTTP_200_OK,
                 'message': 'Password successfully updated',
-                'data': []
             }
 
             return Response(response)
