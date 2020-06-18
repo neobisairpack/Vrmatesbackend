@@ -1,80 +1,301 @@
 FORMAT: 1A
-HOST: https://polls.apiblueprint.org/
+HOST: https://vrmates.kg/
 
-# airpack
+# Vrmates
 
-Polls is a simple API allowing consumers to view polls and vote in them.
+## Users Collection [/users/]
 
-## Questions Collection [/questions]
-
-### List All Questions [GET]
+### List All Users [GET]
 
 + Response 200 (application/json)
 
         [
             {
-                "question": "Favourite programming language?",
-                "published_at": "2015-08-05T08:40:51.620Z",
-                "choices": [
-                    {
-                        "choice": "Swift",
-                        "votes": 2048
-                    }, {
-                        "choice": "Python",
-                        "votes": 1024
-                    }, {
-                        "choice": "Objective-C",
-                        "votes": 512
-                    }, {
-                        "choice": "Ruby",
-                        "votes": 256
-                    }
-                ]
+                "first_name": "Random",
+                "last_name": "User",
+                "username": "Admin",
+                "email": "kingdoom_98@mail.ru",
+                "birthday": "1998-12-12",
+                "age": 22,
+                "gender": "Male",
+                "phone": "9965591295572",
+                "address": "Address",
+                "zip_code": "720010",
+                "country": "KGZ",
+                "city": "Bishkek",
+                "state": "State",
+                "points": 0,
+                "rating_count": 0,
+                "avg_rating": 0,
+                "avg_rating_last_ten": 0,
+                "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MiwiZXhwIjoxNTk3NjcyMTE1fQ.Vg1P1_3J6F2ghttoMPMxbBWFquqHM_M8qPV_X7SjAu0"
             }
         ]
 
-### Create a New Question [POST]
+## User's Registration [/users/registration/]
 
-You may create your own question using this action. It takes a JSON
-object containing a question and a collection of answers in the
-form of choices.
+### Register a New User [POST]
 
 + Request (application/json)
 
         {
-            "question": "Favourite programming language?",
-            "choices": [
-                "Swift",
-                "Python",
-                "Objective-C",
-                "Ruby"
-            ]
+            "first_name": "Alex",
+            "last_name": "Chirkov",
+            "username": "Scareface",
+            "email": "aleksei.chirkov.98@gmail.com",
+            "birthday": "2020-12-24",
+            "gender": [
+                "Male",
+                "Female",
+                "Others",
+            ],
+            "phone": "996559129557",
+            "address": "Moscow st. 219",
+            "zip_code": 720010,
+            "country": "Kyrgyzstan",
+            "city": "Bishkek",
+            "state": "Chui",
+            "password": "MyPassword1",
+            "password2": "MyPassword1"
         }
 
 + Response 201 (application/json)
 
     + Headers
 
-            Location: /questions/2
+            Location: /users/registration/
 
     + Body
 
             {
-                "question": "Favourite programming language?",
-                "published_at": "2015-08-05T08:40:51.620Z",
-                "choices": [
-                    {
-                        "choice": "Swift",
-                        "votes": 0
-                    }, {
-                        "choice": "Python",
-                        "votes": 0
-                    }, {
-                        "choice": "Objective-C",
-                        "votes": 0
-                    }, {
-                        "choice": "Ruby",
-                        "votes": 0
-                    }
-                ]
+                "response": "Successfully created a new user. Please check your email and verify your account.",
+                "email": "aleksei.chirkov.98@gmail.com",
+                "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MiwiZXhwIjoxNTk3NjcyMTE1fQ.Vg1P1_3J6F2ghttoMPMxbBWFquqHM_M8qPV_X7SjAu0"
+            }
+
+## User's Login [/users/login/]
+
+### Login User [POST]
+
++ Request (application/json)
+
+        {
+            "email": "aleksei.chirkov.98@mail.ru",
+            "password": "MyPassword1"
+        }
+
++ Response 201 (application/json)
+
+    + Headers
+
+            Location: /users/registration/
+
+    + Body
+
+            {
+                "email": "tektonik_boy98@mail.ru",
+                "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZXhwIjoxNTk3NjczNjI0fQ.WlkOhSg4z7FWKWNHB5dpkiSXm2flXBYD3XeR0ZRL8tY"
+            }
+
+## Change User's Password [/users/change-password/]
+
+### Change Password [PUT]
+
++ Request (application/json)
+
+        {
+            "old_password": "MyPassword1",
+            "new_password": "MyNewPassword1",
+        }
+
++ Response 201 (application/json)
+
+    + Headers
+    
+            Location: /users/change-password/
+    
+    + Body
+
+            {
+                "status": "Success",
+                "code": 200,
+                "message": "Password successfully updated",
+            }
+
+## Services [/api/service/]
+
+### Services List [GET]
+
++ Response 200 (application/json)
+
+        {
+            "id": 1,
+            "requester": {
+                "first_name": "Random",
+                "last_name": "User",
+                "username": "Admin",
+                "email": "kingdoom_98@mail.ru",
+                "birthday": "1998-12-12",
+                "age": 22,
+                "gender": "Male",
+                "phone": "9965591295572",
+                "address": "Address",
+                "zip_code": "720010",
+                "country": "KGZ",
+                "city": "Bishkek",
+                "state": "State",
+                "points": 0,
+                "rating_count": 0,
+                "avg_rating": 0,
+                "avg_rating_last_ten": 0,
+                "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MiwiZXhwIjoxNTk3NjczODMxfQ.UxBFjLrucjVMwmW1GyAxfPa-XSLo0p2ZfYVnU6JHhNk"
+            },
+            "provider": null, <!-- If provider exists, it's same as Requester -->
+            "service_type": "Package delivery",
+            "start_location": "Start",
+            "end_location": "End",
+            "deadline": "2020-06-18T12:07:46Z",
+            "status": "Created, not accepted",
+            "title": "Title",
+            "text": "Text",
+            "image": "/media/IMG_2537_yoEuMYA.jpg",
+            "is_checked": true <!-- True if admin has checked, if false response will be empty -->
+        }
+
+### Create Service [POST]
+
++ Request (application/json)
+
+        {
+            "requester": 1, <!-- Id -->
+            "provider": 1, <!-- Id -->
+            "service_type": [ 
+                "Package delivery",
+                "Airport pick up/drop off"
+            ],
+            "start_location": "Start",
+            "end_location": "End",
+            "deadline": "2020-06-18T12:07:46Z",
+            "status": [                  <!-- By default Created, not accepted-->
+                "Created, not accepted",
+                "Accepted/in process",
+                "Successfully done",
+                "Not confirmed",
+                "Canceled"
+            ],
+            "title": "Title",
+            "text": "Text",
+            "image": null, <!-- None by default, user can choose it later, or select from exists imges on his own computer -->
+            "is_checked": False <!-- Needs to admin validation, user must not have this field when he posts -->
+        }
+
++ Response 201 (application/json)
+
+    + Headers
+
+            Location: /api/service/
+
+    + Body
+
+            {
+                "id": 2,
+                "service_type": "Package delivery",
+                "start_location": "Start",
+                "end_location": "End",
+                "deadline": "2020-06-18T12:07:46Z",
+                "status": "Created, not accepted",
+                "title": "Title",
+                "text": "Text",
+                "image": null,
+                "is_checked": false,
+                "requester": 1,
+                "provider": 1
+            }
+
+## Hosting [/api/hosting/]
+
+### Hosting List [GET]
+
++ Response 200 (application/json)
+
+        {
+            "id": 2,
+            "requester": {
+                "first_name": "Random",
+                "last_name": "User",
+                "username": "TestUser",
+                "email": "admin1@mail.ru",
+                "birthday": "1212-12-12",
+                "age": 808,
+                "gender": "Male",
+                "phone": "996559129557123",
+                "address": "Address",
+                "zip_code": "720010",
+                "country": "KGZ",
+                "city": "Bishkek",
+                "state": "State",
+                "points": 0,
+                "rating_count": 0,
+                "avg_rating": 0,
+                "avg_rating_last_ten": 0,
+                "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MywiZXhwIjoxNTk3NjgwNDQ4fQ.xr3D3rSaW6GzgTRwbskFJbYnaJRbN3bnfjYDXu5rw0w"
+            },
+            "provider": null,
+            "date": "2020-06-18",
+            "service_type": "Hosting",
+            "title": "Title",
+            "text": "Text",
+            "preferences": "Private bedroom",
+            "status": "Created, not accepted",
+            "image": "/media/IMG_2537_n2gCcOD.jpg",
+            "is_checked": true
+        }
+
+### Create Service [POST]
+
++ Request (application/json)
+
+        {
+            "requester": 1, <!-- Id -->
+            "provider": 1, <!-- Id -->
+            "date": "2020-11-21",
+            "service_type": "Hosting",
+            "title": "Title",
+            "text": "Text",
+            "preferences": [
+                "Private bedroom",
+                "Living room",
+                "Common space"
+            ],
+            "status": [                  <!-- By default Created, not accepted-->
+                "Created, not accepted",
+                "Accepted/in process",
+                "Successfully done",
+                "Not confirmed",
+                "Canceled"
+            ],
+            "image": null, <!-- None by default, user can choose it later, or select from exists imges on his own computer -->
+            "is_checked": False <!-- Needs to admin validation, user must not have this field when he posts -->
+        }
+
++ Response 201 (application/json)
+
+    + Headers
+
+            Location: /api/hosting/
+
+    + Body
+A
+            {
+                "id": 5,
+                "date": "2020-11-21",
+                "service_type": "Hosting",
+                "title": "Title",
+                "text": "Text",
+                "preferences": "Private bedroom",
+                "status": "Created, not accepted",
+                "image": null,
+                "is_checked": false,
+                "requester": 1,
+                "provider": 1
             }
