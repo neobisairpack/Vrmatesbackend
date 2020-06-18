@@ -83,6 +83,7 @@ class Hosting(models.Model):
     text = models.TextField(max_length=512)
     preferences = models.CharField(max_length=64, choices=PREFS)
     status = models.CharField(max_length=64, choices=STATUS, default='Created, not accepted')
+    image = models.ImageField()
 
 
 @receiver(post_save, sender=Hosting)
