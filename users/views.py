@@ -11,10 +11,16 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.generics import RetrieveUpdateAPIView, UpdateAPIView
 
-from .models import User
+from .models import User, Rating
 from .tokens import account_activation_token
 from .permissions import IsOwnerOrReadOnly
-from .serializers import RegistrationSerializer, LoginSerializer, UserSerializer, ChangeUserPasswordSerializer
+from .serializers import (
+    RegistrationSerializer,
+    LoginSerializer,
+    UserSerializer,
+    ChangeUserPasswordSerializer,
+    RatingSerializer
+)
 
 
 def activate(request, uid64, token):
@@ -121,3 +127,33 @@ class ChangeUserPasswordUpdateAPIView(UpdateAPIView):
 
             return Response(response)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class RatingAPIView(APIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = RatingSerializer
+    queryset = Rating.objects.all()
+
+    def get(self):
+        rating = self.queryset.all()
+        serializer = self.serializer_class(rating, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def delete(self, request):
+        pk = request.data.get('id', None)
+        if pk is None:
+            raise ParseError('Service id is required.')
+
+        try:
+            service = self.queryset.get(id=pk)
+        except Service.DoesNotExist:
+            raise Http404
+        else:
+            service.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)

@@ -3,7 +3,7 @@ import datetime
 from rest_framework import serializers
 from django.contrib.auth import authenticate
 
-from .models import User
+from .models import User, Rating
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
@@ -131,3 +131,9 @@ class ChangeUserPasswordSerializer(serializers.Serializer):
     model = User
     old_password = serializers.CharField(required=True)
     new_password = serializers.CharField(required=True)
+
+
+class RatingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Rating
+        fields = '__all__'

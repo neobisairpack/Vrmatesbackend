@@ -86,7 +86,8 @@ class Hosting(models.Model):
     text = models.TextField(max_length=512)
     preferences = models.CharField(max_length=64, choices=PREFS)
     status = models.CharField(max_length=64, choices=STATUS, default='Created, not accepted')
-    image = models.ImageField(null=True, blank=True)
+    image = models.ImageField(null=True, blank=True
+                              )
     is_checked = models.BooleanField(default=False)
 
 
