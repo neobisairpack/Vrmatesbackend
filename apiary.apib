@@ -122,6 +122,88 @@ HOST: https://vrmates.kg/
                 "message": "Password successfully updated",
             }
 
+## Rating [/users/rating/]
+
+### Rating List [get]
+
++ Response 200 (application/json)
+
+        {
+            "id": 1,
+            "requester": {
+                "first_name": "Alex",
+                "last_name": "Chirkov",
+                "username": "Scareface",
+                "email": "tektonik_boy98@mail.ru",
+                "birthday": "2020-06-18",
+                "age": 0,
+                "gender": "Male",
+                "phone": "996559129557",
+                "address": "Moscow st.",
+                "zip_code": "720010",
+                "country": "KGZ",
+                "city": "Bishkek",
+                "state": "Chui",
+                "points": 80,
+                "rating_count": 0,
+                "avg_rating": 0,
+                "avg_rating_last_ten": 0,
+                "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZXhwIjoxNTk3NzY5NjQwfQ.X6pXU5lWy_ZKdqJcQtAjey4d72dTNZbtP__nRKRPE9Y"
+            },
+            "provider": {
+                "first_name": "Random",
+                "last_name": "User",
+                "username": "Admin",
+                "email": "kingdoom_98@mail.ru",
+                "birthday": "1998-12-12",
+                "age": 22,
+                "gender": "Male",
+                "phone": "9965591295572",
+                "address": "Address",
+                "zip_code": "720010",
+                "country": "KGZ",
+                "city": "Bishkek",
+                "state": "State",
+                "points": 0,
+                "rating_count": 1,
+                "avg_rating": 2.0,
+                "avg_rating_last_ten": 2.0,
+                "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MiwiZXhwIjoxNTk3NzY5NjQwfQ.-sxOcXs0_UR_5-wG9YJqEi4VrEUnZzckaUeJMNUBvDY"
+            },
+            "rating": 2.0,
+            "text": "good",
+            "date": "2020-06-19"
+        }
+
+### Rate User [POST]
+
++ Request (application/json)
+
+        {
+            "requester": 1,
+            "provider": 1,
+            "rating": 2.4,
+            "text": "User's review",
+            "date": "2020-11-21"
+        }
+
++ Response 201 (application/json)
+
+    + Headers
+
+            Location: /api/service/
+
+    + Body
+
+            {
+                "id": 2,
+                "rating": 2.4,
+                "text": "User's review",
+                "date": "2020-06-19",
+                "requester": 1,
+                "provider": 1
+            }
+
 ## Services [/api/service/]
 
 ### Services List [GET]
