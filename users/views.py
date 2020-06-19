@@ -1,11 +1,12 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.core.mail import EmailMessage
 from django.contrib.auth import login
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.template.loader import render_to_string
-from rest_framework import status
+from rest_framework import status, viewsets
+from rest_framework.exceptions import ParseError
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -19,7 +20,8 @@ from .serializers import (
     LoginSerializer,
     UserSerializer,
     ChangeUserPasswordSerializer,
-    RatingSerializer
+    RatingSerializer,
+    RatingReadableSerializer
 )
 
 
@@ -129,14 +131,14 @@ class ChangeUserPasswordUpdateAPIView(UpdateAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class RatingAPIView(APIView):
+class RatingViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
     serializer_class = RatingSerializer
     queryset = Rating.objects.all()
 
-    def get(self):
+    def list(self, request, *args, **kwargs):
         rating = self.queryset.all()
-        serializer = self.serializer_class(rating, many=True)
+        serializer = RatingReadableSerializer(rating, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
@@ -151,9 +153,9 @@ class RatingAPIView(APIView):
             raise ParseError('Service id is required.')
 
         try:
-            service = self.queryset.get(id=pk)
-        except Service.DoesNotExist:
+            rating = self.queryset.get(id=pk)
+        except Rating.DoesNotExist:
             raise Http404
         else:
-            service.delete()
+            rating.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
