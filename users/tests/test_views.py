@@ -2,9 +2,10 @@ import json
 
 from django.urls import reverse
 from rest_framework import status
-from rest_framework.test import APITestCase, APIClient
+from rest_framework.test import APITestCase, APIClient, APIRequestFactory
 
-from users.models import User
+from users.models import User, Rating
+from users.views import RatingViewSet
 
 
 class UserTest(APITestCase):
@@ -53,3 +54,4 @@ class UserTest(APITestCase):
         }
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+

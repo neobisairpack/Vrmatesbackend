@@ -4,7 +4,6 @@ from rest_framework.test import APITestCase, URLPatternsTestCase
 
 from users.views import (
     RegistrationAPIView,
-    LoginAPIView,
 )
 
 

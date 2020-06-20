@@ -80,10 +80,10 @@ class Hosting(models.Model):
     requester = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='hosting_requester')
     provider = models.ForeignKey('users.User', on_delete=models.CASCADE,
                                  related_name='hosting_provider', null=True, blank=True)
-    date = models.DateField()
     service_type = models.CharField(choices=SERVICE_TYPE, max_length=32, default='Hosting')
     title = models.CharField(max_length=128)
     text = models.TextField(max_length=512)
+    date = models.DateField()
     preferences = models.CharField(max_length=64, choices=PREFS)
     status = models.CharField(max_length=64, choices=STATUS, default='Created, not accepted')
     image = models.ImageField(null=True, blank=True
