@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Service, Hosting
+from .models import Service, Hosting, Support
 
 
 class ServiceAdmin(admin.ModelAdmin):
@@ -17,5 +17,13 @@ class HostingAdmin(admin.ModelAdmin):
         model = Hosting
 
 
+class SupportAdmin(admin.ModelAdmin):
+    list_display = [field.name for field in Support._meta.fields]
+
+    class Meta:
+        model = Support
+
+
 admin.site.register(Service, ServiceAdmin)
 admin.site.register(Hosting, HostingAdmin)
+admin.site.register(Support, SupportAdmin)

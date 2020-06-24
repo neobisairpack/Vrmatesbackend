@@ -145,3 +145,10 @@ def service_cancel_notification(sender, instance, created, **kwargs):
             mail_subject, message, to=[to_email]
         )
         email.send()
+
+
+class Support(models.Model):
+    name = models.CharField(max_length=128)
+    email = models.EmailField(unique=False)
+    title = models.CharField(max_length=128)
+    text = models.TextField(max_length=512)

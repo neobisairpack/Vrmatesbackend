@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Service, Hosting
+from .models import Service, Hosting, Support
 from users.serializers import UserSerializer
 
 
@@ -34,3 +34,8 @@ class HostingReadableSerializer(serializers.ModelSerializer):
         model = Hosting
         fields = '__all__'
 
+
+class SupportSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Support
+        fields = '__all__'
