@@ -4,12 +4,13 @@ from rest_framework.response import Response
 from rest_framework.exceptions import ParseError
 from rest_framework.permissions import IsAuthenticated
 
-from .models import Service, Hosting
+from .models import Service, Hosting, Support
 from .serializers import (
     ServiceSerializer,
     ServiceReadableSerializer,
     HostingSerializer,
-    HostingReadableSerializer
+    HostingReadableSerializer,
+    SupportSerializer
 )
 
 
@@ -70,4 +71,34 @@ class HostingViewSet(viewsets.ModelViewSet):
             raise Http404
         else:
             hosting.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class SupportViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsAuthenticated, )
+    queryset = Support.objects.all()
+    serializer_class = SupportSerializer
+
+    def list(self, request, *args, **kwargs):
+        support = self.queryset.all()
+        serializer = self.serializer_class(support, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def delete(self, request):
+        pk = request.data.get('id', None)
+        if pk is None:
+            raise ParseError('Id is required')
+
+        try:
+            support = self.queryset.get(id=pk)
+        except Support.DoesNotExist:
+            raise Http404
+        else:
+            support.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)

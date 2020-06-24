@@ -1,4 +1,4 @@
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, JsonResponse
 from django.core.mail import EmailMessage
 from django.contrib.auth import login
 from django.contrib.sites.shortcuts import get_current_site
