@@ -5,6 +5,13 @@ from django.template.loader import render_to_string
 from django.db.models.signals import post_save
 
 
+# 1) Search posts with types of service
+# 2) Search posts with status
+# 3) Search posts with date
+# 4) Search support message with date
+# 5) Search support message with author
+
+
 class Service(models.Model):
     SERVICE_TYPE = (
         ('Package delivery', 'Package delivery'),
@@ -27,7 +34,8 @@ class Service(models.Model):
     status = models.CharField(choices=STATUS, max_length=64, default='Created, not accepted')
     title = models.CharField(max_length=128)
     text = models.TextField(max_length=512)
-    image = models.ImageField(null=True, blank=True)
+    image = models.ImageField(upload_to='services', null=True, blank=True)
+    created = models.DateField(auto_now_add=True)
     is_checked = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
@@ -86,8 +94,8 @@ class Hosting(models.Model):
     date = models.DateField()
     preferences = models.CharField(max_length=64, choices=PREFS)
     status = models.CharField(max_length=64, choices=STATUS, default='Created, not accepted')
-    image = models.ImageField(null=True, blank=True
-                              )
+    image = models.ImageField(upload_to='hostings', null=True, blank=True)
+    created = models.DateField(auto_now_add=True)
     is_checked = models.BooleanField(default=False)
 
 
@@ -152,3 +160,4 @@ class Support(models.Model):
     email = models.EmailField(unique=False)
     title = models.CharField(max_length=128)
     text = models.TextField(max_length=512)
+    date = models.DateField(auto_now_add=True)

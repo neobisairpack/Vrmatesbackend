@@ -1,4 +1,5 @@
 import datetime
+from dateutil.relativedelta import relativedelta
 
 from rest_framework import serializers
 from django.contrib.auth import authenticate
@@ -103,12 +104,13 @@ class UserSerializer(serializers.ModelSerializer):
         fields = [
             'first_name', 'last_name', 'username', 'email', 'birthday', 'age', 'gender',
             'phone', 'address', 'zip_code', 'country', 'city', 'state',
-            'points', 'rating_count', 'avg_rating', 'avg_rating_last_ten', 'password', 'token'
+            'points', 'rating_count', 'avg_rating', 'avg_rating_last_ten', 'password',  'token'
         ]
         read_only_fields = ['token', ]
 
     def get_age(self, instance):
-        return datetime.date.today().year - instance.birthday.year
+        age = relativedelta(datetime.datetime.now(), instance.birthday).years
+        return age
 
     def points_validation(self, instance):
         if instance.points < 20:

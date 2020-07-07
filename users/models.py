@@ -1,4 +1,5 @@
 import jwt
+import datetime
 from django.core.mail import EmailMessage
 from django.db import models
 from datetime import datetime, timedelta
@@ -11,6 +12,13 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 from django.template.loader import render_to_string
 
 from services import models as service_models
+
+
+# 1) Search users with Email
+# 2) Search users with is_active
+# 3) Search ratings with requester
+# 4) Search ratings with title
+# 5) Search ratings with date
 
 
 class MyUserManager(BaseUserManager):
@@ -60,7 +68,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     state = models.CharField(max_length=128)
     city = models.CharField(max_length=128)
     address = models.CharField(max_length=128)
-    image = models.ImageField(null=True, blank=True)
+    image = models.ImageField(upload_to='users', null=True, blank=True)
     points = models.PositiveIntegerField(default=20)
     is_admin = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
@@ -149,8 +157,9 @@ def banned_notifications(sender, instance, created, **kwargs):
 
 
 class Rating(models.Model):
-    requester = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='give_rate')
-    provider = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='receive_rate')
+    requester = models.ForeignKey('users.User', verbose_name='rater', on_delete=models.CASCADE, related_name='give_rate')
+    provider = models.ForeignKey('users.User', verbose_name='receiver', on_delete=models.CASCADE, related_name='receive_rate')
     rating = models.FloatField(validators=(MinValueValidator(1.0), MaxValueValidator(5.0)))
     text = models.TextField(max_length=512)
+    image = models.ImageField(upload_to='ratings')
     date = models.DateField(auto_now_add=True)

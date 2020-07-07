@@ -61,6 +61,7 @@ REST_FRAMEWORK = {
     ),
     'EXCEPTION_HANDLER': 'users.exceptions.user_exception_handler',
     'NON_FIELD_ERRORS_KEY': 'error',
+'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
 }
 
 MIDDLEWARE = [
