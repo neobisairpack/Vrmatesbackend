@@ -68,7 +68,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     state = models.CharField(max_length=128)
     city = models.CharField(max_length=128)
     address = models.CharField(max_length=128)
-    about_me = models.TextField(max_length=512)
+    about_me = models.TextField(max_length=512, null=True, blank=True)
     image = models.ImageField(upload_to='users', null=True, blank=True)
     points = models.PositiveIntegerField(default=20)
     is_admin = models.BooleanField(default=False)

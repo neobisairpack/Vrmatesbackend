@@ -8,7 +8,6 @@ class ServiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Service
         fields = '__all__'
-        exclude = ['is_checked']
 
 
 class ServiceReadableSerializer(serializers.ModelSerializer):
@@ -36,6 +35,12 @@ class HostingReadableSerializer(serializers.ModelSerializer):
 
 
 class SupportSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Support
+        fields = '__all__'
+
+
+class SupportReadableSerializer(serializers.ModelSerializer):
     class Meta:
         model = Support
         fields = '__all__'

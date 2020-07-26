@@ -1,9 +1,10 @@
 from django.http import Http404
 from rest_framework import viewsets, status
-from rest_framework.filters import SearchFilter
+from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.exceptions import ParseError
 from rest_framework.permissions import IsAuthenticated
+from django_filters.rest_framework import DjangoFilterBackend
 
 from .models import Service, Hosting, Support
 from .serializers import (
@@ -11,7 +12,8 @@ from .serializers import (
     ServiceReadableSerializer,
     HostingSerializer,
     HostingReadableSerializer,
-    SupportSerializer
+    SupportSerializer,
+    SupportReadableSerializer
 )
 
 
@@ -19,8 +21,6 @@ class ServiceViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated, )
     queryset = Service.objects.filter(is_checked=True)
     serializer_class = ServiceSerializer
-    filter_backends = (SearchFilter, )
-    search_fields = ('service_type', 'status', 'date')
 
     def list(self, request, *args, **kwargs):
         service = self.queryset.all()
@@ -51,8 +51,8 @@ class HostingViewSet(viewsets.ModelViewSet):
     # permission_classes = (IsAuthenticated, )
     queryset = Hosting.objects.filter(is_checked=True)
     serializer_class = HostingSerializer
-    filter_backends = (SearchFilter, )
-    search_fields = ('service_type', 'status', 'date')
+    filter_backends = (DjangoFilterBackend, )
+    filterset_fields = ('service_type', 'status', 'date')
 
     def list(self, request, *args, **kwargs):
         hosting = self.queryset.all()
@@ -80,11 +80,9 @@ class HostingViewSet(viewsets.ModelViewSet):
 
 
 class SupportViewSet(viewsets.ModelViewSet):
-    permission_classes = (IsAuthenticated, )
+    # permission_classes = (IsAuthenticated, )
     queryset = Support.objects.all()
     serializer_class = SupportSerializer
-    filter_backends = (SearchFilter, )
-    search_fields = ('name', 'date')
 
     def list(self, request, *args, **kwargs):
         support = self.queryset.all()
@@ -109,3 +107,24 @@ class SupportViewSet(viewsets.ModelViewSet):
         else:
             support.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class ServiceFilterListAPIView(ListAPIView):
+    queryset = Service.objects.filter(is_checked=True)
+    serializer_class = ServiceReadableSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['service_type', 'status', 'created']
+
+
+class HostingFilterListAPIView(ListAPIView):
+    queryset = Hosting.objects.filter(is_checked=True)
+    serializer_class = HostingReadableSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['service_type', 'status', 'created']
+
+
+class SupportFilterListAPIView(ListAPIView):
+    queryset = Support.objects.all()
+    serializer_class = SupportReadableSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['name', 'date']

@@ -19,7 +19,6 @@ from decouple import config
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
@@ -31,7 +30,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['167.172.178.135']
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -42,7 +40,7 @@ INSTALLED_APPS = [
     # rest-framework
     'rest_framework',
     'rest_framework.authtoken',
-    
+
     # django
     'django.contrib.admin',
     'django.contrib.auth',
@@ -50,6 +48,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # django filters
+    'django_filters',
 ]
 
 AUTH_USER_MODEL = 'users.User'
@@ -61,7 +62,7 @@ REST_FRAMEWORK = {
     ),
     'EXCEPTION_HANDLER': 'users.exceptions.user_exception_handler',
     'NON_FIELD_ERRORS_KEY': 'error',
-'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
 }
 
 MIDDLEWARE = [
@@ -94,7 +95,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'airpack.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
@@ -115,7 +115,6 @@ else:
         }
     }
 
-
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
 
@@ -133,7 +132,6 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/

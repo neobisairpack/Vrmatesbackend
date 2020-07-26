@@ -43,7 +43,7 @@ class Service(models.Model):
             if self.is_checked:
                 super(Service, self).save(*args, **kwargs)
             return "Not enough points"
-        elif self.is_checked:
+        else:
             super(Service, self).save(*args, **kwargs)
 
 
