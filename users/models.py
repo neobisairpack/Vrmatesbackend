@@ -43,6 +43,7 @@ class MyUserManager(BaseUserManager):
             email=email,
             password=password,
         )
+        user.is_active = True
         user.is_admin = True
         user.is_staff = True
         user.is_superuser = True
@@ -71,9 +72,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     about_me = models.TextField(max_length=512, null=True, blank=True)
     image = models.ImageField(upload_to='users', null=True, blank=True)
     points = models.PositiveIntegerField(default=20)
+    is_banned = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -145,7 +147,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 @receiver(post_save, sender=User)
 def banned_notifications(sender, instance, created, **kwargs):
-    if not instance.is_active:
+    if instance.is_banned:
+        instance.is_active = False
         mail_subject = 'Your account has been banned | Vrmates team'
         message = render_to_string('users/account_ban.html', {
             'user': instance.first_name
