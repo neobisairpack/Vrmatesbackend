@@ -80,7 +80,7 @@ class HostingViewSet(viewsets.ModelViewSet):
 
 
 class SupportViewSet(viewsets.ModelViewSet):
-    # permission_classes = (IsAuthenticated, )
+    permission_classes = (IsAuthenticated, )
     queryset = Support.objects.all()
     serializer_class = SupportSerializer
 
