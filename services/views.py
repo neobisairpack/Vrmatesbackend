@@ -48,7 +48,7 @@ class ServiceViewSet(viewsets.ModelViewSet):
 
 
 class HostingViewSet(viewsets.ModelViewSet):
-    # permission_classes = (IsAuthenticated, )
+    permission_classes = (IsAuthenticated, )
     queryset = Hosting.objects.filter(is_checked=True)
     serializer_class = HostingSerializer
     filter_backends = (DjangoFilterBackend, )
