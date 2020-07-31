@@ -124,7 +124,7 @@ HOST: https://vrmates.kg/
 
 ## Rating [/users/rating/]
 
-### Rating List [get]
+### Rating List [GET]
 
 + Response 200 (application/json)
 
@@ -381,3 +381,142 @@ HOST: https://vrmates.kg/
                 "requester": 1,
                 "provider": 1
             }
+
+## Support [/api/support/]
+
+### Support List [GET]
+
++ Response 200 (application/json)
+
+        {
+            "id": 1,
+            "name": "Alex",
+            "email": "admin@mail.ru",
+            "title": "Title",
+            "text": "text",
+            "date": "2020-07-31"
+        }
+
+### Create Support [POST]
+
++ Request (application/json)
+
+        {
+            "name": "Alex",
+            "email": "admin@mail.ru",
+            "title": "Title",
+            "text": "text"
+        }
+
++ Response 201 (application/json)
+
+    + Headers
+
+            Location: /api/hosting/
+
+    + Body
+
+            {
+                "id": 1,
+                "name": "Alex",
+                "email": "admin@mail.ru",
+                "title": "Title",
+                "text": "text",
+                "date": "2020-07-31"
+            }
+
+## Service List Filter [/api/service-filters/?service_type=Package+delivery&status=Created%2C+not+accepted&created=2020-07-21]
+
+### Service List Filter [GET]
+
++ Response 200 (application/json)
+
+        {
+            "id": 1,
+            "requester": {
+                "first_name": "Aleksei",
+                "last_name": "Support",
+                "username": "Alex",
+                "email": "kingdoom_98@mail.ru",
+                "birthday": "2020-07-21",
+                "age": 0,
+                "gender": "Male",
+                "phone": "0559129557",
+                "address": "Address",
+                "zip_code": "720010",
+                "country": "Kyrgyzstan",
+                "city": "Бишкек",
+                "state": "Chui",
+                "points": 20,
+                "rating_count": 0,
+                "avg_rating": 0,
+                "avg_rating_last_ten": 0,
+                "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MiwiZXhwIjoxNjAwNjcxNjg2fQ.Hrv_sRWj2R8Vg0C8NsCjo1YesWITZQC_gL79Ju4NVS4"
+            },
+            "provider": null,
+            "service_type": "Package delivery",
+            "start_location": "Start",
+            "end_location": "End",
+            "deadline": "2020-07-21T12:21:46Z",
+            "status": "Created, not accepted",
+            "title": "Title",
+            "text": "Text",
+            "image": null,
+            "created": "2020-07-21",
+            "is_checked": true
+        }
+
+## Hosting List Filter [/api/hosting-filters/?service_type=Hosting&status=Created%2C+not+accepted&created=2020-07-21]
+
+### Hosting List Filter [GET]
+
++ Response 200 (application/json)
+
+        {
+            "id": 1,
+            "requester": {
+                "first_name": "Alex",
+                "last_name": "Chirkov",
+                "username": "Scareface",
+                "email": "admin@mail.ru",
+                "birthday": "2020-07-21",
+                "age": 0,
+                "gender": "Male",
+                "phone": "+996 559 129 557",
+                "address": "Address",
+                "zip_code": "720010",
+                "country": "Kyrgyzstan",
+                "city": "Test City",
+                "state": "Chui",
+                "points": 40,
+                "rating_count": 2,
+                "avg_rating": 4.0,
+                "avg_rating_last_ten": 4.0,
+                "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZXhwIjoxNjAwNjcyMDI1fQ._R5cny-gXfqAIMjIrghgc0LL9Ce5iF--J7W7sOTMeVU"
+            },
+            "provider": null,
+            "service_type": "Hosting",
+            "title": "Title",
+            "text": "Text",
+            "date": "2020-07-21",
+            "preferences": "Private bedroom",
+            "status": "Created, not accepted",
+            "image": null,
+            "created": "2020-07-21",
+            "is_checked": true
+        }
+
+## Support List Filter [/api/support-filters/?name=Aleksei&date=2020-07-21]
+
+### Support List Filter [GET]
+
++ Response 200 (application/json)
+
+        {
+            "id": 1,
+            "name": "Aleksei",
+            "email": "kingdoom_98@mail.ru",
+            "title": "Title",
+            "text": "Text",
+            "date": "2020-07-21"
+        }
