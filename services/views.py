@@ -6,25 +6,17 @@ from rest_framework.exceptions import ParseError
 from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 
-from .models import Service, Hosting, Support
-from .serializers import (
-    ServiceSerializer,
-    ServiceReadableSerializer,
-    HostingSerializer,
-    HostingReadableSerializer,
-    SupportSerializer,
-    SupportReadableSerializer
-)
+from .serializers import *
 
 
-class ServiceViewSet(viewsets.ModelViewSet):
+class DeliveryViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated, )
-    queryset = Service.objects.filter(is_checked=True)
-    serializer_class = ServiceSerializer
+    queryset = Delivery.objects.filter(is_checked=True)
+    serializer_class = DeliverySerializer
 
     def list(self, request, *args, **kwargs):
         service = self.queryset.all()
-        serializer = ServiceReadableSerializer(service, many=True)
+        serializer = DeliveryReadableSerializer(service, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
@@ -40,7 +32,97 @@ class ServiceViewSet(viewsets.ModelViewSet):
 
         try:
             service = self.queryset.get(id=pk)
-        except Service.DoesNotExist:
+        except Delivery.DoesNotExist:
+            raise Http404
+        else:
+            service.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class RequestDeliveryViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsAuthenticated, )
+    queryset = RequestDelivery.objects.all()
+    serializer_class = RequestDeliverySerializer
+
+    def list(self, request, *args, **kwargs):
+        service = self.queryset.all()
+        serializer = RequestDeliveryReadableSerializer(service, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def delete(self, request):
+        pk = request.data.get('id', None)
+        if pk is None:
+            raise ParseError('Service id is required.')
+
+        try:
+            service = self.queryset.get(id=pk)
+        except RequestDelivery.DoesNotExist:
+            raise Http404
+        else:
+            service.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class PickUpViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsAuthenticated, )
+    queryset = PickUp.objects.filter(is_checked=True)
+    serializer_class = PickUpSerializer
+
+    def list(self, request, *args, **kwargs):
+        service = self.queryset.all()
+        serializer = PickUpReadableSerializer(service, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def delete(self, request):
+        pk = request.data.get('id', None)
+        if pk is None:
+            raise ParseError('Service id is required.')
+
+        try:
+            service = self.queryset.get(id=pk)
+        except PickUp.DoesNotExist:
+            raise Http404
+        else:
+            service.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class RequestPickUpViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsAuthenticated, )
+    queryset = RequestPickUp.objects.all()
+    serializer_class = RequestPickUpSerializer
+
+    def list(self, request, *args, **kwargs):
+        service = self.queryset.all()
+        serializer = RequestPickUpReadableSerializer(service, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def delete(self, request):
+        pk = request.data.get('id', None)
+        if pk is None:
+            raise ParseError('Service id is required.')
+
+        try:
+            service = self.queryset.get(id=pk)
+        except RequestPickUp.DoesNotExist:
             raise Http404
         else:
             service.delete()
@@ -51,12 +133,10 @@ class HostingViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated, )
     queryset = Hosting.objects.filter(is_checked=True)
     serializer_class = HostingSerializer
-    filter_backends = (DjangoFilterBackend, )
-    filterset_fields = ('service_type', 'status', 'date')
 
     def list(self, request, *args, **kwargs):
-        hosting = self.queryset.all()
-        serializer = HostingReadableSerializer(hosting, many=True)
+        service = self.queryset.all()
+        serializer = HostingReadableSerializer(service, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
@@ -76,6 +156,36 @@ class HostingViewSet(viewsets.ModelViewSet):
             raise Http404
         else:
             hosting.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class RequestHostingViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsAuthenticated, )
+    queryset = RequestHosting.objects.all()
+    serializer_class = RequestHostingSerializer
+
+    def list(self, request, *args, **kwargs):
+        service = self.queryset.all()
+        serializer = RequestHostingReadableSerializer(service, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def delete(self, request):
+        pk = request.data.get('id', None)
+        if pk is None:
+            raise ParseError('Service id is required.')
+
+        try:
+            service = self.queryset.get(id=pk)
+        except RequestHosting.DoesNotExist:
+            raise Http404
+        else:
+            service.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -109,18 +219,117 @@ class SupportViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class ServiceFilterListAPIView(ListAPIView):
-    queryset = Service.objects.filter(is_checked=True)
-    serializer_class = ServiceReadableSerializer
+class ProvideDeliveryViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsAuthenticated, )
+    queryset = ProvideDelivery.objects.filter(is_checked=True)
+    serializer_class = ProvideDeliverySerializer
+
+    def list(self, request, *args, **kwargs):
+        service = self.queryset.all()
+        serializer = ProvideDeliveryReadableSerializer(service, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def delete(self, request):
+        pk = request.data.get('id', None)
+        if pk is None:
+            raise ParseError('Service id is required.')
+
+        try:
+            service = self.queryset.get(id=pk)
+        except ProvideDelivery.DoesNotExist:
+            raise Http404
+        else:
+            service.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class ProvidePickUpViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsAuthenticated, )
+    queryset = ProvidePickUp.objects.filter(is_checked=True)
+    serializer_class = ProvidePickUpSerializer
+
+    def list(self, request, *args, **kwargs):
+        service = self.queryset.all()
+        serializer = ProvidePickUpReadableSerializer(service, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data, user=request.user)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def delete(self, request):
+        pk = request.data.get('id', None)
+        if pk is None:
+            raise ParseError('Service id is required.')
+
+        try:
+            service = self.queryset.get(id=pk)
+        except ProvidePickUp.DoesNotExist:
+            raise Http404
+        else:
+            service.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class ProvideHostingViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsAuthenticated, )
+    queryset = ProvideHosting.objects.filter(is_checked=True)
+    serializer_class = ProvideHostingSerializer
+    filter_backends = (DjangoFilterBackend, )
+    filterset_fields = ('service_type', 'status', 'date')
+
+    def list(self, request, *args, **kwargs):
+        service = self.queryset.all()
+        serializer = ProvideHostingReadableSerializer(service, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def delete(self, request):
+        pk = request.data.get('id', None)
+        if pk is None:
+            raise ParseError('ProvideHosting id is required.')
+
+        try:
+            ProvideHosting = self.queryset.get(id=pk)
+        except ProvideHosting.DoesNotExist:
+            raise Http404
+        else:
+            ProvideHosting.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class DeliveryFilterListAPIView(ListAPIView):
+    queryset = Delivery.objects.filter(is_checked=True)
+    serializer_class = DeliveryReadableSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['service_type', 'status', 'created']
+    filterset_fields = ['status', 'created']
+
+
+class PickUpFilterListAPIView(ListAPIView):
+    queryset = PickUp.objects.filter(is_checked=True)
+    serializer_class = PickUpReadableSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['status', 'created']
 
 
 class HostingFilterListAPIView(ListAPIView):
     queryset = Hosting.objects.filter(is_checked=True)
     serializer_class = HostingReadableSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['service_type', 'status', 'created']
+    filterset_fields = ['status', 'created']
 
 
 class SupportFilterListAPIView(ListAPIView):

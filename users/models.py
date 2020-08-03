@@ -59,7 +59,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
     first_name = models.CharField(max_length=64)
     last_name = models.CharField(max_length=64)
-    username = models.CharField(max_length=64, unique=True)
+    username = models.CharField(max_length=64, unique=True, null=True, blank=True)
     email = models.EmailField(unique=True)
     birthday = models.DateField(null=True)
     gender = models.CharField(max_length=16, choices=USER_GENDER)
@@ -135,9 +135,10 @@ class User(AbstractBaseUser, PermissionsMixin):
             return 0
 
     def canceled_posts_count(self):
-        service = service_models.Service.objects.filter(requester=self, status='Canceled').count()
+        delivery = service_models.Delivery.objects.filter(requester=self, status='Canceled').count()
+        pickup = service_models.PickUp.objects.filter(requester=self, status='Canceled').count()
         hosting = service_models.Hosting.objects.filter(requester=self, status='Canceled').count()
-        return service + hosting
+        return delivery + pickup + hosting
 
     avg_rating.short_description = 'Average rating'
     rating_count.short_description = 'Rating count'
