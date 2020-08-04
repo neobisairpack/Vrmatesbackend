@@ -1,27 +1,9 @@
+import datetime
 from django.db import models
 from django.dispatch import receiver
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.db.models.signals import post_save
-
-
-# class Service(models.Model):
-#     STATUS = (
-#         ('Created, not accepted', 'Created, not accepted'),
-#         ('Accepted/in process', 'Accepted/in process'),
-#         ('Successfully done', 'Successfully done'),
-#         ('Not confirmed', 'Not confirmed'),
-#         ('Canceled', 'Canceled')
-#     )
-#     requester = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='service_requester')
-#     provider = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='service_provider',
-#                                  blank=True, null=True)
-#     status = models.CharField(choices=STATUS, max_length=64, default='Created, not accepted')
-#     title = models.CharField(max_length=128)
-#     text = models.TextField(max_length=640)
-#     image = models.ImageField(upload_to='services', null=True, blank=True)
-#     created = models.DateField(auto_now_add=True)
-#     is_checked = models.BooleanField(default=False)
 
 
 class Delivery(models.Model):
@@ -56,6 +38,14 @@ class Delivery(models.Model):
             return "Not enough points"
         else:
             super(Delivery, self).save(*args, **kwargs)
+
+
+class DeliveryImage(models.Model):
+    post = models.ForeignKey(Delivery, default=None, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='deliveries')
+
+    def __str__(self):
+        return str(self.post)
 
 
 class RequestDelivery(models.Model):
@@ -93,6 +83,32 @@ def pay_delivery_points(sender, instance, created, **kwargs):
         user_points += points
         user.points = user_points
         user.save()
+
+
+@receiver(post_save, sender=Delivery)
+def delivery_cancel_points_back(sender, instance, created, **kwargs):
+    deadline = instance.deadline
+    today = datetime.date.today()
+    timer = int(deadline.day) - int(today.day)
+    if instance.status == 'Canceled' and timer > 2:
+        points = 10
+        requester = instance.requester
+        provider = instance.provider
+        requester_points = requester.points
+        provider_points = provider.points
+        requester_points += points
+        provider_points += points
+        requester.points = requester_points
+        provider.points = provider_points
+        provider.save()
+        requester.save()
+    elif instance.status == 'Canceled' and timer < 2:
+        points = 20
+        provider = instance.provider
+        provider_points = provider.points
+        provider_points += points
+        provider.points = provider_points
+        provider.save()
 
 
 @receiver(post_save, sender=Delivery)
@@ -146,6 +162,14 @@ class PickUp(models.Model):
             super(PickUp, self).save(*args, **kwargs)
 
 
+class PickUpImage(models.Model):
+    post = models.ForeignKey(PickUp, default=None, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='pick_ups')
+
+    def __str__(self):
+        return str(self.post)
+
+
 class RequestPickUp(models.Model):
     STATUS = (
         ('Pending', 'Pending'),
@@ -181,6 +205,32 @@ def pay_pickup_points(sender, instance, created, **kwargs):
         user_points += points
         user.points = user_points
         user.save()
+
+
+@receiver(post_save, sender=PickUp)
+def pick_up_cancel_points_back(sender, instance, created, **kwargs):
+    deadline = instance.deadline
+    today = datetime.date.today()
+    timer = int(deadline.day) - int(today.day)
+    if instance.status == 'Canceled' and timer > 2:
+        points = 10
+        requester = instance.requester
+        provider = instance.provider
+        requester_points = requester.points
+        provider_points = provider.points
+        requester_points += points
+        provider_points += points
+        requester.points = requester_points
+        provider.points = provider_points
+        provider.save()
+        requester.save()
+    elif instance.status == 'Canceled' and timer < 2:
+        points = 20
+        provider = instance.provider
+        provider_points = provider.points
+        provider_points += points
+        provider.points = provider_points
+        provider.save()
 
 
 @receiver(post_save, sender=PickUp)
@@ -238,6 +288,14 @@ class Hosting(models.Model):
             super(Hosting, self).save(*args, **kwargs)
 
 
+class HostingImage(models.Model):
+    post = models.ForeignKey(Hosting, default=None, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='pick_ups')
+
+    def __str__(self):
+        return str(self.post)
+
+
 class RequestHosting(models.Model):
     STATUS = (
         ('Pending', 'Pending'),
@@ -276,6 +334,32 @@ def pay_hosting_points(sender, instance, created, **kwargs):
 
 
 @receiver(post_save, sender=Hosting)
+def hosting_cancel_points_back(sender, instance, created, **kwargs):
+    deadline = instance.deadline
+    today = datetime.date.today()
+    timer = int(deadline.day) - int(today.day)
+    if instance.status == 'Canceled' and timer > 2:
+        points = 10
+        requester = instance.requester
+        provider = instance.provider
+        requester_points = requester.points
+        provider_points = provider.points
+        requester_points += points
+        provider_points += points
+        requester.points = requester_points
+        provider.points = provider_points
+        provider.save()
+        requester.save()
+    elif instance.status == 'Canceled' and timer < 2:
+        points = 20
+        provider = instance.provider
+        provider_points = provider.points
+        provider_points += points
+        provider.points = provider_points
+        provider.save()
+
+
+@receiver(post_save, sender=Hosting)
 def hosting_cancel_notification(sender, instance, created, **kwargs):
     if instance.status == 'Canceled':
         mail_subject = 'Status changed | Vrmates team'
@@ -293,7 +377,6 @@ def hosting_cancel_notification(sender, instance, created, **kwargs):
 
 
 class Support(models.Model):
-    name = models.CharField(max_length=128)
     email = models.EmailField(unique=False)
     title = models.CharField(max_length=128)
     text = models.TextField(max_length=512)

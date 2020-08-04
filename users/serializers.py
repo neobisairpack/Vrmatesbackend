@@ -1,8 +1,8 @@
 import datetime
-from dateutil.relativedelta import relativedelta
 
 from rest_framework import serializers
 from django.contrib.auth import authenticate
+from dateutil.relativedelta import relativedelta
 
 from .models import User, Rating
 
@@ -129,10 +129,7 @@ class UserSerializer(serializers.ModelSerializer):
         return instance
 
 
-class ChangeUserPasswordSerializer(serializers.Serializer):
-    model = User
-    old_password = serializers.CharField(required=True)
-    new_password = serializers.CharField(required=True)
+
 
 
 class RatingSerializer(serializers.ModelSerializer):

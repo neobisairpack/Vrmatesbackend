@@ -41,6 +41,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
 
+    # reset password
+    'django_rest_passwordreset',
+
     # django
     'django.contrib.admin',
     'django.contrib.auth',

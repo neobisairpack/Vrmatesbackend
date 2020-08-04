@@ -8,6 +8,7 @@ from users.views import RatingViewSet
 router = routers.DefaultRouter()
 router.register('delivery', DeliveryViewSet)
 router.register('request-delivery', RequestDeliveryViewSet)
+router.register('delivery-images', DeliveryImageViewSet)
 router.register('pickup', PickUpViewSet)
 router.register('request-delivery', RequestPickUpViewSet)
 router.register('hosting', HostingViewSet)

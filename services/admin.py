@@ -14,6 +14,13 @@ class DeliveryAdmin(admin.ModelAdmin):
         obj.save()
 
 
+class DeliveryImageAdmin(admin.ModelAdmin):
+    list_display = [field.name for field in DeliveryImage._meta.fields]
+
+    class Meta:
+        model = DeliveryImage
+
+
 class RequestDeliveryAdmin(admin.ModelAdmin):
     list_display = [field.name for field in RequestDelivery._meta.fields]
 
@@ -71,6 +78,7 @@ class RequestHostingAdmin(admin.ModelAdmin):
 
 class SupportAdmin(admin.ModelAdmin):
     list_display = [field.name for field in Support._meta.fields]
+    search_fields = ['name', 'date']
 
     class Meta:
         model = Support
@@ -110,6 +118,7 @@ class ProvideHostingAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Delivery, DeliveryAdmin)
+admin.site.register(DeliveryImage, DeliveryImageAdmin)
 admin.site.register(RequestDelivery, RequestDeliveryAdmin)
 admin.site.register(PickUp, PickUpAdmin)
 admin.site.register(RequestPickUp, RequestPickUpAdmin)

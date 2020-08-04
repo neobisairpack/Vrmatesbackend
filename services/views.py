@@ -1,6 +1,7 @@
-from django.http import Http404
+from django.http import Http404, JsonResponse
 from rest_framework import viewsets, status
 from rest_framework.generics import ListAPIView
+from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from rest_framework.exceptions import ParseError
 from rest_framework.permissions import IsAuthenticated
@@ -37,6 +38,37 @@ class DeliveryViewSet(viewsets.ModelViewSet):
         else:
             service.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class DeliveryImageViewSet(viewsets.ModelViewSet):
+    # permission_classes = (IsAuthenticated, )
+    queryset = DeliveryImage.objects.all()
+    serializer_class = DeliveryImagesSerializer
+
+    def get(self):
+        image = self.queryset.all()
+        serializer = self.serializer_class(image, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def delete(self, request):
+        pk = request.data.get('id', None)
+        if pk is None:
+            raise ParseError('Service id is required.')
+
+        try:
+            image = self.queryset.get(id=pk)
+        except DeliveryImage.DoesNotExist:
+            raise Http404
+        else:
+            image.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 
 class RequestDeliveryViewSet(viewsets.ModelViewSet):

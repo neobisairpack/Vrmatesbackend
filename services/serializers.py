@@ -21,6 +21,12 @@ class DeliveryReadableSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class DeliveryImagesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DeliveryImage
+        fields = '__all__'
+
+
 class RequestDeliverySerializer(serializers.ModelSerializer):
     requester = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
