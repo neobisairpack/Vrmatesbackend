@@ -20,7 +20,6 @@ from .serializers import (
     RegistrationSerializer,
     LoginSerializer,
     UserSerializer,
-    ChangeUserPasswordSerializer,
     RatingSerializer,
     RatingReadableSerializer
 )
@@ -109,34 +108,6 @@ class UserListAPIView(generics.ListAPIView):
     serializer_class = UserSerializer
     filter_backends = (SearchFilter, )
     search_fields = ('email', )
-
-
-class ChangeUserPasswordUpdateAPIView(UpdateAPIView):
-    permission_classes = (IsOwnerOrReadOnly, )
-    model = User
-    serializer_class = ChangeUserPasswordSerializer
-
-    def get_object(self):
-        obj = self.request.user
-        return obj
-
-    def update(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        serializer = self.get_serializer(data=request.data)
-
-        if serializer.is_valid():
-            if not self.object.check_password(serializer.data.get('old_password')):
-                return Response({'old_password': ['Wrong password.']}, status=status.HTTP_400_BAD_REQUEST)
-            self.object.set_password(serializer.data.get('new_password'))
-            self.object.save()
-            response = {
-                'status': 'Success',
-                'code': status.HTTP_200_OK,
-                'message': 'Password successfully updated',
-            }
-
-            return Response(response)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class RatingViewSet(viewsets.ModelViewSet):
