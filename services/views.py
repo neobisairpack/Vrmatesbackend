@@ -1,7 +1,6 @@
-from django.http import Http404, JsonResponse
+from django.http import Http404
 from rest_framework import viewsets, status
 from rest_framework.generics import ListAPIView
-from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from rest_framework.exceptions import ParseError
 from rest_framework.permissions import IsAuthenticated
@@ -41,7 +40,7 @@ class DeliveryViewSet(viewsets.ModelViewSet):
 
 
 class DeliveryImageViewSet(viewsets.ModelViewSet):
-    # permission_classes = (IsAuthenticated, )
+    permission_classes = (IsAuthenticated, )
     queryset = DeliveryImage.objects.all()
     serializer_class = DeliveryImagesSerializer
 
@@ -68,7 +67,6 @@ class DeliveryImageViewSet(viewsets.ModelViewSet):
         else:
             image.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
-
 
 
 class RequestDeliveryViewSet(viewsets.ModelViewSet):
@@ -131,6 +129,36 @@ class PickUpViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+class PickUpImageViewSet(viewsets.ModelViewSet):
+    # permission_classes = (IsAuthenticated, )
+    queryset = PickUpImage.objects.all()
+    serializer_class = PickUpImagesSerializer
+
+    def get(self):
+        image = self.queryset.all()
+        serializer = self.serializer_class(image, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def delete(self, request):
+        pk = request.data.get('id', None)
+        if pk is None:
+            raise ParseError('Service id is required.')
+
+        try:
+            image = self.queryset.get(id=pk)
+        except PickUpImage.DoesNotExist:
+            raise Http404
+        else:
+            image.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+
 class RequestPickUpViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated, )
     queryset = RequestPickUp.objects.all()
@@ -188,6 +216,36 @@ class HostingViewSet(viewsets.ModelViewSet):
             raise Http404
         else:
             hosting.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class HostingImageViewSet(viewsets.ModelViewSet):
+    # permission_classes = (IsAuthenticated, )
+    queryset = HostingImage.objects.all()
+    serializer_class = HostingImagesSerializer
+
+    def get(self):
+        image = self.queryset.all()
+        serializer = self.serializer_class(image, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def delete(self, request):
+        pk = request.data.get('id', None)
+        if pk is None:
+            raise ParseError('Service id is required.')
+
+        try:
+            image = self.queryset.get(id=pk)
+        except HostingImage.DoesNotExist:
+            raise Http404
+        else:
+            image.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -281,6 +339,36 @@ class ProvideDeliveryViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+class RequestProvideDeliveryViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsAuthenticated, )
+    queryset = RequestProvideDelivery.objects.all()
+    serializer_class = RequestProvideDeliverySerializer
+
+    def list(self, request, *args, **kwargs):
+        service = self.queryset.all()
+        serializer = RequestProvideDeliverySerializer(service, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def delete(self, request):
+        pk = request.data.get('id', None)
+        if pk is None:
+            raise ParseError('Service id is required.')
+
+        try:
+            service = self.queryset.get(id=pk)
+        except RequestProvideDelivery.DoesNotExist:
+            raise Http404
+        else:
+            service.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+
 class ProvidePickUpViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated, )
     queryset = ProvidePickUp.objects.filter(is_checked=True)
@@ -311,12 +399,40 @@ class ProvidePickUpViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class ProvideHostingViewSet(viewsets.ModelViewSet):
+class RequestProvidePickUpViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated, )
+    queryset = RequestProvidePickUp.objects.all()
+    serializer_class = RequestProvidePickUpSerializer
+
+    def list(self, request, *args, **kwargs):
+        service = self.queryset.all()
+        serializer = RequestProvidePickUpSerializer(service, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def delete(self, request):
+        pk = request.data.get('id', None)
+        if pk is None:
+            raise ParseError('Service id is required.')
+
+        try:
+            service = self.queryset.get(id=pk)
+        except RequestProvidePickUp.DoesNotExist:
+            raise Http404
+        else:
+            service.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class ProvideHostingViewSet(viewsets.ModelViewSet):
+    # permission_classes = (IsAuthenticated, )
     queryset = ProvideHosting.objects.filter(is_checked=True)
     serializer_class = ProvideHostingSerializer
-    filter_backends = (DjangoFilterBackend, )
-    filterset_fields = ('service_type', 'status', 'date')
 
     def list(self, request, *args, **kwargs):
         service = self.queryset.all()
@@ -335,11 +451,41 @@ class ProvideHostingViewSet(viewsets.ModelViewSet):
             raise ParseError('ProvideHosting id is required.')
 
         try:
-            ProvideHosting = self.queryset.get(id=pk)
+            provide_hosting = self.queryset.get(id=pk)
         except ProvideHosting.DoesNotExist:
             raise Http404
         else:
-            ProvideHosting.delete()
+            provide_hosting.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class RequestProvideHostingViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsAuthenticated, )
+    queryset = RequestProvideHosting.objects.all()
+    serializer_class = RequestProvideHostingSerializer
+
+    def list(self, request, *args, **kwargs):
+        service = self.queryset.all()
+        serializer = RequestProvideHostingSerializer(service, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def delete(self, request):
+        pk = request.data.get('id', None)
+        if pk is None:
+            raise ParseError('Service id is required.')
+
+        try:
+            service = self.queryset.get(id=pk)
+        except RequestProvideHosting.DoesNotExist:
+            raise Http404
+        else:
+            service.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
 
 

@@ -102,9 +102,9 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
-            'first_name', 'last_name', 'username', 'email', 'birthday', 'age', 'gender',
+            'id', 'first_name', 'last_name', 'username', 'email', 'birthday', 'age', 'gender',
             'phone', 'address', 'zip_code', 'country', 'city', 'state',
-            'points', 'rating_count', 'avg_rating', 'avg_rating_last_ten', 'password',  'token'
+            'points', 'rating_count', 'avg_rating', 'avg_rating_last_ten', 'password', 'token'
         ]
         read_only_fields = ['token', ]
 
@@ -127,9 +127,6 @@ class UserSerializer(serializers.ModelSerializer):
 
         instance.save()
         return instance
-
-
-
 
 
 class RatingSerializer(serializers.ModelSerializer):

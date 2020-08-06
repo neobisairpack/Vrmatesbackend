@@ -61,6 +61,12 @@ class PickUpReadableSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class PickUpImagesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PickUpImage
+        fields = '__all__'
+
+
 class RequestPickUpSerializer(serializers.ModelSerializer):
     requester = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
@@ -92,6 +98,12 @@ class HostingReadableSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Hosting
+        fields = '__all__'
+
+
+class HostingImagesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HostingImage
         fields = '__all__'
 
 
@@ -141,6 +153,14 @@ class ProvideDeliveryReadableSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class RequestProvideDeliverySerializer(serializers.ModelSerializer):
+    requester = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
+    class Meta:
+        model = RequestProvideDelivery
+        fields = '__all__'
+
+
 class ProvidePickUpSerializer(serializers.ModelSerializer):
     provider = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
@@ -158,6 +178,14 @@ class ProvidePickUpReadableSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class RequestProvidePickUpSerializer(serializers.ModelSerializer):
+    requester = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
+    class Meta:
+        model = RequestProvidePickUp
+        fields = '__all__'
+
+
 class ProvideHostingSerializer(serializers.ModelSerializer):
     provider = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
@@ -172,4 +200,12 @@ class ProvideHostingReadableSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ProvideHosting
+        fields = '__all__'
+
+
+class RequestProvideHostingSerializer(serializers.ModelSerializer):
+    requester = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
+    class Meta:
+        model = RequestProvideHosting
         fields = '__all__'

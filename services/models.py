@@ -24,7 +24,6 @@ class Delivery(models.Model):
     status = models.CharField(choices=STATUS, max_length=64, default='Created, not accepted')
     title = models.CharField(max_length=128)
     text = models.TextField(max_length=512)
-    image = models.ImageField(upload_to='deliveries', null=True, blank=True)
     created = models.DateField(auto_now_add=True)
     is_checked = models.BooleanField(default=False)
 
@@ -121,7 +120,7 @@ def delivery_cancel_notification(sender, instance, created, **kwargs):
             'title': instance.title,
             'status': instance.status
         })
-        to_email = instance.requester.email
+        to_email = [instance.requester.email, instance.provider.email]
         email = EmailMessage(
             mail_subject, message, to=[to_email]
         )
@@ -146,7 +145,6 @@ class PickUp(models.Model):
     status = models.CharField(choices=STATUS, max_length=64, default='Created, not accepted')
     title = models.CharField(max_length=128)
     text = models.TextField(max_length=512)
-    image = models.ImageField(upload_to='pickups', null=True, blank=True)
     created = models.DateField(auto_now_add=True)
     is_checked = models.BooleanField(default=False)
 
@@ -243,7 +241,7 @@ def pickup_cancel_notification(sender, instance, created, **kwargs):
             'title': instance.title,
             'status': instance.status
         })
-        to_email = instance.requester.email
+        to_email = [instance.requester.email, instance.provider.email]
         email = EmailMessage(
             mail_subject, message, to=[to_email]
         )
@@ -272,7 +270,6 @@ class Hosting(models.Model):
     date = models.DateField()
     preferences = models.CharField(max_length=64, choices=PREFS)
     status = models.CharField(max_length=64, choices=STATUS, default='Created, not accepted')
-    image = models.ImageField(upload_to='hostings', null=True, blank=True)
     created = models.DateField(auto_now_add=True)
     is_checked = models.BooleanField(default=False)
 
@@ -369,7 +366,7 @@ def hosting_cancel_notification(sender, instance, created, **kwargs):
             'title': instance.title,
             'status': instance.status
         })
-        to_email = instance.requester.email
+        to_email = [instance.requester.email, instance.provider.email]
         email = EmailMessage(
             mail_subject, message, to=[to_email]
         )
@@ -383,10 +380,17 @@ class Support(models.Model):
     date = models.DateField(auto_now_add=True)
 
     def __str__(self):
-        return '%s %s' % (self.name, self.title)
+        return '%s' % self.title
 
 
 class ProvideDelivery(models.Model):
+    STATUS = (
+        ('Created, not accepted', 'Created, not accepted'),
+        ('Accepted/in process', 'Accepted/in process'),
+        ('Successfully done', 'Successfully done'),
+        ('Not confirmed', 'Not confirmed'),
+        ('Canceled', 'Canceled')
+    )
     provider = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='delivery_prov',
                                  null=True, blank=True)
     requester = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='delivery_req',
@@ -394,9 +398,10 @@ class ProvideDelivery(models.Model):
     departure_location = models.CharField(max_length=128)
     departure_date = models.DateField()
     arrival_location = models.CharField(max_length=128)
-    arrival_date = models.DateField()
+    arrival_date = models.DateTimeField()
     title = models.CharField(max_length=64)
     text = models.TextField(max_length=640)
+    status = models.CharField(choices=STATUS, max_length=64)
     created = models.DateField(auto_now_add=True)
     is_checked = models.BooleanField(default=False)
 
@@ -404,7 +409,84 @@ class ProvideDelivery(models.Model):
         return self.title
 
 
+@receiver(post_save, sender=ProvideDelivery)
+def pull_hosting_points(sender, instance, created, **kwargs):
+    if created and instance.status == 'Accepted/in process':
+        points = 20
+        user = instance.requester
+        user_points = user.points
+        user_points -= points
+        user.points = user_points
+        user.save()
+
+
+@receiver(post_save, sender=ProvideDelivery)
+def pay_hosting_points(sender, instance, created, **kwargs):
+    if instance.status == "Successfully done":
+        points = 20
+        user = instance.provider
+        user_points = user.points
+        user_points += points
+        user.points = user_points
+        user.save()
+
+
+@receiver(post_save, sender=ProvideDelivery)
+def hosting_cancel_points_back(sender, instance, created, **kwargs):
+    if instance.status == 'Canceled':
+        points = 10
+        requester = instance.requester
+        provider = instance.provider
+        requester_points = requester.points
+        provider_points = provider.points
+        requester_points += points
+        provider_points += points
+        requester.points = requester_points
+        provider.points = provider_points
+        provider.save()
+        requester.save()
+
+
+@receiver(post_save, sender=ProvideDelivery)
+def hosting_cancel_notification(sender, instance, created, **kwargs):
+    if instance.status == 'Canceled':
+        mail_subject = 'Status changed | Vrmates team'
+        message = render_to_string('services/service_canceled.html', {
+            'user': instance.requester.first_name,
+            'provider': instance.provider.first_name,
+            'title': instance.title,
+            'status': instance.status
+        })
+        to_email = [instance.requester.email, instance.provider.email]
+        email = EmailMessage(
+            mail_subject, message, to=[to_email]
+        )
+        email.send()
+
+
+class RequestProvideDelivery(models.Model):
+    STATUS = (
+        ('Pending', 'Pending'),
+        ('Accepted', 'Accepted'),
+        ('Canceled', 'Canceled'),
+    )
+    service = models.ForeignKey(ProvideDelivery, on_delete=models.CASCADE)
+    requester = models.ForeignKey('users.User', on_delete=models.CASCADE)
+    status = models.CharField(choices=STATUS, max_length=64, default='Pending')
+    accept = models.BooleanField(default=False)
+
+    def __str__(self):
+        return '%s' % self.service
+
+
 class ProvidePickUp(models.Model):
+    STATUS = (
+        ('Created, not accepted', 'Created, not accepted'),
+        ('Accepted/in process', 'Accepted/in process'),
+        ('Successfully done', 'Successfully done'),
+        ('Not confirmed', 'Not confirmed'),
+        ('Canceled', 'Canceled')
+    )
     provider = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='pickup_prov',
                                  null=True, blank=True)
     requester = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='pickup_req',
@@ -413,6 +495,7 @@ class ProvidePickUp(models.Model):
     pickup_date = models.DateField()
     title = models.CharField(max_length=64)
     text = models.TextField(max_length=640)
+    status = models.CharField(choices=STATUS, max_length=64)
     created = models.DateField(auto_now_add=True)
     is_checked = models.BooleanField(default=False)
 
@@ -420,7 +503,84 @@ class ProvidePickUp(models.Model):
         return self.title
 
 
+@receiver(post_save, sender=ProvidePickUp)
+def pull_hosting_points(sender, instance, created, **kwargs):
+    if created and instance.status == 'Accepted/in process':
+        points = 20
+        user = instance.requester
+        user_points = user.points
+        user_points -= points
+        user.points = user_points
+        user.save()
+
+
+@receiver(post_save, sender=ProvidePickUp)
+def pay_hosting_points(sender, instance, created, **kwargs):
+    if instance.status == "Successfully done":
+        points = 20
+        user = instance.provider
+        user_points = user.points
+        user_points += points
+        user.points = user_points
+        user.save()
+
+
+@receiver(post_save, sender=ProvidePickUp)
+def hosting_cancel_points_back(sender, instance, created, **kwargs):
+    if instance.status == 'Canceled':
+        points = 10
+        requester = instance.requester
+        provider = instance.provider
+        requester_points = requester.points
+        provider_points = provider.points
+        requester_points += points
+        provider_points += points
+        requester.points = requester_points
+        provider.points = provider_points
+        provider.save()
+        requester.save()
+
+
+@receiver(post_save, sender=ProvidePickUp)
+def hosting_cancel_notification(sender, instance, created, **kwargs):
+    if instance.status == 'Canceled':
+        mail_subject = 'Status changed | Vrmates team'
+        message = render_to_string('services/service_canceled.html', {
+            'user': instance.requester.first_name,
+            'provider': instance.provider.first_name,
+            'title': instance.title,
+            'status': instance.status
+        })
+        to_email = [instance.requester.email, instance.provider.email]
+        email = EmailMessage(
+            mail_subject, message, to=[to_email]
+        )
+        email.send()
+
+
+class RequestProvidePickUp(models.Model):
+    STATUS = (
+        ('Pending', 'Pending'),
+        ('Accepted', 'Accepted'),
+        ('Canceled', 'Canceled'),
+    )
+    service = models.ForeignKey(ProvidePickUp, on_delete=models.CASCADE)
+    requester = models.ForeignKey('users.User', on_delete=models.CASCADE)
+    status = models.CharField(choices=STATUS, max_length=64, default='Pending')
+    accept = models.BooleanField(default=False)
+
+    def __str__(self):
+        return '%s' % self.service
+
+
 class ProvideHosting(models.Model):
+    STATUS = (
+        ('Created, not accepted', 'Created, not accepted'),
+        ('Accepted/in process', 'Accepted/in process'),
+        ('Successfully done', 'Successfully done'),
+        ('Not confirmed', 'Not confirmed'),
+        ('Canceled', 'Canceled')
+    )
     HOSTING = (
         ('Private bedroom', 'Private bedroom'),
         ('Living room', 'Living room'),
@@ -434,9 +594,81 @@ class ProvideHosting(models.Model):
     location = models.CharField(max_length=128)
     hosting_date = models.DateField()
     title = models.CharField(max_length=64)
+    text = models.CharField(max_length=640)
     hosting_type = models.CharField(max_length=64, choices=HOSTING)
+    status = models.CharField(choices=STATUS, max_length=64)
     created = models.DateField(auto_now_add=True)
     is_checked = models.BooleanField(default=False)
 
     def __str__(self):
         return self.title
+
+
+@receiver(post_save, sender=ProvideHosting)
+def pull_hosting_points(sender, instance, created, **kwargs):
+    if created and instance.status == 'Accepted/in process':
+        points = 20
+        user = instance.requester
+        user_points = user.points
+        user_points -= points
+        user.points = user_points
+        user.save()
+
+
+@receiver(post_save, sender=ProvideHosting)
+def pay_hosting_points(sender, instance, created, **kwargs):
+    if instance.status == "Successfully done":
+        points = 20
+        user = instance.provider
+        user_points = user.points
+        user_points += points
+        user.points = user_points
+        user.save()
+
+
+@receiver(post_save, sender=ProvideHosting)
+def hosting_cancel_points_back(sender, instance, created, **kwargs):
+    if instance.status == 'Canceled':
+        points = 10
+        requester = instance.requester
+        provider = instance.provider
+        requester_points = requester.points
+        provider_points = provider.points
+        requester_points += points
+        provider_points += points
+        requester.points = requester_points
+        provider.points = provider_points
+        provider.save()
+        requester.save()
+
+
+@receiver(post_save, sender=ProvideHosting)
+def hosting_cancel_notification(sender, instance, created, **kwargs):
+    if instance.status == 'Canceled':
+        mail_subject = 'Status changed | Vrmates team'
+        message = render_to_string('services/service_canceled.html', {
+            'user': instance.requester.first_name,
+            'provider': instance.provider.first_name,
+            'title': instance.title,
+            'status': instance.status
+        })
+        to_email = [instance.requester.email, instance.provider.email]
+        email = EmailMessage(
+            mail_subject, message, to=[to_email]
+        )
+        email.send()
+
+
+class RequestProvideHosting(models.Model):
+    STATUS = (
+        ('Pending', 'Pending'),
+        ('Accepted', 'Accepted'),
+        ('Canceled', 'Canceled'),
+    )
+    service = models.ForeignKey(ProvideHosting, on_delete=models.CASCADE)
+    requester = models.ForeignKey('users.User', on_delete=models.CASCADE)
+    status = models.CharField(choices=STATUS, max_length=64, default='Pending')
+    accept = models.BooleanField(default=False)
+
+    def __str__(self):
+        return '%s' % self.service

@@ -43,6 +43,13 @@ class PickUpAdmin(admin.ModelAdmin):
         obj.save()
 
 
+class PickUpImageAdmin(admin.ModelAdmin):
+    list_display = [field.name for field in PickUpImage._meta.fields]
+
+    class Meta:
+        model = PickUpImage
+
+
 class RequestPickUpAdmin(admin.ModelAdmin):
     list_display = [field.name for field in RequestPickUp._meta.fields]
 
@@ -63,6 +70,13 @@ class HostingAdmin(admin.ModelAdmin):
     def save_model(self, request, obj, form, change):
         obj.requester = request.user
         obj.save()
+
+
+class HostingImageAdmin(admin.ModelAdmin):
+    list_display = [field.name for field in HostingImage._meta.fields]
+
+    class Meta:
+        model = HostingImage
 
 
 class RequestHostingAdmin(admin.ModelAdmin):
