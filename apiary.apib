@@ -11,6 +11,7 @@ HOST: https://vrmates.kg/
 
         [
             {
+                "id": 1,
                 "first_name": "Random",
                 "last_name": "User",
                 "username": "Admin",
@@ -97,31 +98,6 @@ HOST: https://vrmates.kg/
                 "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZXhwIjoxNTk3NjczNjI0fQ.WlkOhSg4z7FWKWNHB5dpkiSXm2flXBYD3XeR0ZRL8tY"
             }
 
-## Change User's Password [/users/change-password/]
-
-### Change Password [PUT]
-
-+ Request (application/json)
-
-        {
-            "old_password": "MyPassword1",
-            "new_password": "MyNewPassword1",
-        }
-
-+ Response 201 (application/json)
-
-    + Headers
-    
-            Location: /users/change-password/
-    
-    + Body
-
-            {
-                "status": "Success",
-                "code": 200,
-                "message": "Password successfully updated",
-            }
-
 ## Rating [/users/rating/]
 
 ### Rating List [GET]
@@ -204,47 +180,46 @@ HOST: https://vrmates.kg/
                 "provider": 1
             }
 
-## Services [/api/service/]
+## Delivery [/api/delivery/]
 
-### Services List [GET]
+### Delivery List [GET]
 
 + Response 200 (application/json)
 
         {
             "id": 1,
             "requester": {
-                "first_name": "Random",
-                "last_name": "User",
+                "first_name": "",
+                "last_name": "",
                 "username": "Admin",
-                "email": "kingdoom_98@mail.ru",
-                "birthday": "1998-12-12",
-                "age": 22,
-                "gender": "Male",
-                "phone": "9965591295572",
-                "address": "Address",
-                "zip_code": "720010",
-                "country": "KGZ",
-                "city": "Bishkek",
-                "state": "State",
+                "email": "tektonik_boy98@mail.ru",
+                "birthday": null,
+                "age": 0,
+                "gender": "",
+                "phone": null,
+                "address": null,
+                "zip_code": null,
+                "country": null,
+                "city": null,
+                "state": null,
                 "points": 0,
                 "rating_count": 0,
                 "avg_rating": 0,
                 "avg_rating_last_ten": 0,
-                "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MiwiZXhwIjoxNTk3NjczODMxfQ.UxBFjLrucjVMwmW1GyAxfPa-XSLo0p2ZfYVnU6JHhNk"
+                "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZXhwIjoxNjAxOTAxMDc1fQ.SzpfdA02loxg2Xe6y1F0rRtInPXfzFttiZtalLCljnY"
             },
-            "provider": null, <!-- If provider exists, it's same as Requester -->
-            "service_type": "Package delivery",
-            "start_location": "Start",
-            "end_location": "End",
-            "deadline": "2020-06-18T12:07:46Z",
+            "provider": null,
+            "pickup_location": "das",
+            "drop_off_location": "asdasdas",
+            "deadline": "2020-08-06",
             "status": "Created, not accepted",
             "title": "Title",
-            "text": "Text",
-            "image": "/media/IMG_2537_yoEuMYA.jpg",
-            "is_checked": true <!-- True if admin has checked, if false response will be empty -->
+            "text": "asasssdf",
+            "created": "2020-08-06",
+            "is_checked": true
         }
 
-### Create Service [POST]
+### Create Delivery [POST]
 
 + Request (application/json)
 
@@ -267,7 +242,6 @@ HOST: https://vrmates.kg/
             ],
             "title": "Title",
             "text": "Text",
-            "image": null, <!-- None by default, user can choose it later, or select from exists imges on his own computer -->
             "is_checked": False <!-- Needs to admin validation, user must not have this field when he posts -->
         }
 
@@ -288,7 +262,93 @@ HOST: https://vrmates.kg/
                 "status": "Created, not accepted",
                 "title": "Title",
                 "text": "Text",
-                "image": null,
+                "is_checked": false,
+                "requester": 1,
+                "provider": 1
+            }
+
+## Pick Up [/api/pickup/]
+
+### Pick Up List [GET]
+
++ Response 200 (application/json)
+
+        {
+            "id": 1,
+            "requester": {
+                "first_name": "",
+                "last_name": "",
+                "username": "Admin",
+                "email": "tektonik_boy98@mail.ru",
+                "birthday": null,
+                "age": 0,
+                "gender": "",
+                "phone": null,
+                "address": null,
+                "zip_code": null,
+                "country": null,
+                "city": null,
+                "state": null,
+                "points": 0,
+                "rating_count": 0,
+                "avg_rating": 0,
+                "avg_rating_last_ten": 0,
+                "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZXhwIjoxNjAxOTAxMDc1fQ.SzpfdA02loxg2Xe6y1F0rRtInPXfzFttiZtalLCljnY"
+            },
+            "provider": null,
+            "pickup_location": "das",
+            "drop_off_location": "asdasdas",
+            "deadline": "2020-08-06",
+            "status": "Created, not accepted",
+            "title": "Title",
+            "text": "asasssdf",
+            "created": "2020-08-06",
+            "is_checked": true
+        }
+
+### Create Pick Up [POST]
+
++ Request (application/json)
+
+        {
+            "requester": 1, <!-- Id -->
+            "provider": 1, <!-- Id -->
+            "service_type": [ 
+                "Package delivery",
+                "Airport pick up/drop off"
+            ],
+            "start_location": "Start",
+            "end_location": "End",
+            "deadline": "2020-06-18T12:07:46Z",
+            "status": [                  <!-- By default Created, not accepted-->
+                "Created, not accepted",
+                "Accepted/in process",
+                "Successfully done",
+                "Not confirmed",
+                "Canceled"
+            ],
+            "title": "Title",
+            "text": "Text",
+            "is_checked": False <!-- Needs to admin validation, user must not have this field when he posts -->
+        }
+
++ Response 201 (application/json)
+
+    + Headers
+
+            Location: /api/service/
+
+    + Body
+
+            {
+                "id": 2,
+                "service_type": "Package delivery",
+                "start_location": "Start",
+                "end_location": "End",
+                "deadline": "2020-06-18T12:07:46Z",
+                "status": "Created, not accepted",
+                "title": "Title",
+                "text": "Text",
                 "is_checked": false,
                 "requester": 1,
                 "provider": 1
@@ -329,7 +389,6 @@ HOST: https://vrmates.kg/
             "text": "Text",
             "preferences": "Private bedroom",
             "status": "Created, not accepted",
-            "image": "/media/IMG_2537_n2gCcOD.jpg",
             "is_checked": true
         }
 
@@ -356,7 +415,6 @@ HOST: https://vrmates.kg/
                 "Not confirmed",
                 "Canceled"
             ],
-            "image": null, <!-- None by default, user can choose it later, or select from exists imges on his own computer -->
             "is_checked": False <!-- Needs to admin validation, user must not have this field when he posts -->
         }
 
@@ -376,36 +434,33 @@ HOST: https://vrmates.kg/
                 "text": "Text",
                 "preferences": "Private bedroom",
                 "status": "Created, not accepted",
-                "image": null,
                 "is_checked": false,
                 "requester": 1,
                 "provider": 1
             }
 
-## Support [/api/support/]
+## Services' Images [/api/delivery-images/]
 
-### Support List [GET]
+### Get Image from Service [GET]
 
 + Response 200 (application/json)
-
+        
+        <!--/api/delivery-images/,-->
+        <!--/api/pickup-images/,-->
+        <!--/api/hosting-images/-->
         {
             "id": 1,
-            "name": "Alex",
-            "email": "admin@mail.ru",
-            "title": "Title",
-            "text": "text",
-            "date": "2020-07-31"
+            "image": "http://localhost:8000/media/deliveries/telegram.png",
+            "post": 1
         }
 
-### Create Support [POST]
+### Add Image to Delivery [POST]
 
 + Request (application/json)
 
         {
-            "name": "Alex",
-            "email": "admin@mail.ru",
-            "title": "Title",
-            "text": "text"
+            "image": "http://localhost:8000/media/deliveries/telegram.png",
+            "post": 1
         }
 
 + Response 201 (application/json)
@@ -418,6 +473,44 @@ HOST: https://vrmates.kg/
 
             {
                 "id": 1,
+                "image": "http://localhost:8000/media/deliveries/telegram.png",
+                "post": 1
+            }
+
+## Support [/api/support/]
+
+### Support List [GET]
+
++ Response 200 (application/json)
+
+        {
+            "id": 1,
+            "email": "admin@mail.ru",
+            "title": "Title",
+            "text": "text",
+            "date": "2020-07-31"
+        }
+
+### Create Support [POST]
+
++ Request (application/json)
+
+        {
+            "email": "admin@mail.ru",
+            "title": "Title",
+            "text": "text"
+        }
+
++ Response 201 (application/json)
+
+    + Headers
+
+            Location: /api/support/
+
+    + Body
+
+            {
+                "id": 1,
                 "name": "Alex",
                 "email": "admin@mail.ru",
                 "title": "Title",
@@ -425,9 +518,9 @@ HOST: https://vrmates.kg/
                 "date": "2020-07-31"
             }
 
-## Service List Filter [/api/service-filters/?service_type=Package+delivery&status=Created%2C+not+accepted&created=2020-07-21]
+## Pick Up List Filter [/api/pickup-filters/?service_type=Package+delivery&status=Created%2C+not+accepted&created=2020-07-21]
 
-### Service List Filter [GET]
+### Pick Up List Filter [GET]
 
 + Response 200 (application/json)
 
@@ -461,7 +554,46 @@ HOST: https://vrmates.kg/
             "status": "Created, not accepted",
             "title": "Title",
             "text": "Text",
-            "image": null,
+            "created": "2020-07-21",
+            "is_checked": true
+        }
+
+## Delivery List Filter [/api/delivery-filters/?service_type=Package+delivery&status=Created%2C+not+accepted&created=2020-07-21]
+
+### Delivery List Filter [GET]
+
++ Response 200 (application/json)
+
+        {
+            "id": 1,
+            "requester": {
+                "first_name": "Aleksei",
+                "last_name": "Support",
+                "username": "Alex",
+                "email": "kingdoom_98@mail.ru",
+                "birthday": "2020-07-21",
+                "age": 0,
+                "gender": "Male",
+                "phone": "0559129557",
+                "address": "Address",
+                "zip_code": "720010",
+                "country": "Kyrgyzstan",
+                "city": "Бишкек",
+                "state": "Chui",
+                "points": 20,
+                "rating_count": 0,
+                "avg_rating": 0,
+                "avg_rating_last_ten": 0,
+                "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MiwiZXhwIjoxNjAwNjcxNjg2fQ.Hrv_sRWj2R8Vg0C8NsCjo1YesWITZQC_gL79Ju4NVS4"
+            },
+            "provider": null,
+            "service_type": "Package delivery",
+            "start_location": "Start",
+            "end_location": "End",
+            "deadline": "2020-07-21T12:21:46Z",
+            "status": "Created, not accepted",
+            "title": "Title",
+            "text": "Text",
             "created": "2020-07-21",
             "is_checked": true
         }
@@ -501,7 +633,6 @@ HOST: https://vrmates.kg/
             "date": "2020-07-21",
             "preferences": "Private bedroom",
             "status": "Created, not accepted",
-            "image": null,
             "created": "2020-07-21",
             "is_checked": true
         }
@@ -520,3 +651,588 @@ HOST: https://vrmates.kg/
             "text": "Text",
             "date": "2020-07-21"
         }
+
+## Request Service [/api/request-delivery/]
+
+### Requset Service [GET]
+
++ Response 200 (application/json)
+
+        <!--/api/request-delivery/-->
+        <!--/api/request-hosting/-->
+        <!--/api/request-pickup/-->
+        {
+            "id": 1,
+            "service": {
+                "id": 1,
+                "requester": {
+                    "first_name": "",
+                    "last_name": "",
+                    "username": "Admin",
+                    "email": "tektonik_boy98@mail.ru",
+                    "birthday": null,
+                    "age": 0,
+                    "gender": "",
+                    "phone": null,
+                    "address": null,
+                    "zip_code": null,
+                    "country": null,
+                    "city": null,
+                    "state": null,
+                    "points": 0,
+                    "rating_count": 0,
+                    "avg_rating": 0,
+                    "avg_rating_last_ten": 0,
+                    "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZXhwIjoxNjAxOTA0MzU1fQ.PxvBg4qUp07JrKWG2LykVClvDg05LaLn2gsohHrRpiE"
+                },
+                "provider": null,
+                "pickup_location": "das",
+                "drop_off_location": "asdasdas",
+                "deadline": "2020-08-06",
+                "status": "Created, not accepted",
+                "title": "Title",
+                "text": "asasssdf",
+                "created": "2020-08-06",
+                "is_checked": true
+            },
+            "requester": {
+                "first_name": "",
+                "last_name": "",
+                "username": "Admin",
+                "email": "tektonik_boy98@mail.ru",
+                "birthday": null,
+                "age": 0,
+                "gender": "",
+                "phone": null,
+                "address": null,
+                "zip_code": null,
+                "country": null,
+                "city": null,
+                "state": null,
+                "points": 0,
+                "rating_count": 0,
+                "avg_rating": 0,
+                "avg_rating_last_ten": 0,
+                "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZXhwIjoxNjAxOTA0MzU1fQ.PxvBg4qUp07JrKWG2LykVClvDg05LaLn2gsohHrRpiE"
+            },
+            "status": "Pending",
+            "accept": false
+        }
+
+### Request Service [POST]
+
++ Request (application/json)
+
+        {
+            "service": 1,
+            "requester": 1,
+            "status": "Pending",
+            "accept": false
+        }
+
++ Response 201 (application/json)
+
+    + Headers
+
+            Location: /api/request-delivery/
+
+    + Body
+
+            <!--/api/request-delivery/-->
+            <!--/api/request-hosting/-->
+            <!--/api/request-pickup/-->
+            {
+                "id": 1,
+                "service": {
+                    "id": 1,
+                    "requester": {
+                        "first_name": "",
+                        "last_name": "",
+                        "username": "Admin",
+                        "email": "tektonik_boy98@mail.ru",
+                        "birthday": null,
+                        "age": 0,
+                        "gender": "",
+                        "phone": null,
+                        "address": null,
+                        "zip_code": null,
+                        "country": null,
+                        "city": null,
+                        "state": null,
+                        "points": 0,
+                        "rating_count": 0,
+                        "avg_rating": 0,
+                        "avg_rating_last_ten": 0,
+                        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZXhwIjoxNjAxOTA0MzU1fQ.PxvBg4qUp07JrKWG2LykVClvDg05LaLn2gsohHrRpiE"
+                    },
+                    "provider": null,
+                    "pickup_location": "das",
+                    "drop_off_location": "asdasdas",
+                    "deadline": "2020-08-06",
+                    "status": "Created, not accepted",
+                    "title": "Title",
+                    "text": "asasssdf",
+                    "created": "2020-08-06",
+                    "is_checked": true
+                },
+                "requester": {
+                    "first_name": "",
+                    "last_name": "",
+                    "username": "Admin",
+                    "email": "tektonik_boy98@mail.ru",
+                    "birthday": null,
+                    "age": 0,
+                    "gender": "",
+                    "phone": null,
+                    "address": null,
+                    "zip_code": null,
+                    "country": null,
+                    "city": null,
+                    "state": null,
+                    "points": 0,
+                    "rating_count": 0,
+                    "avg_rating": 0,
+                    "avg_rating_last_ten": 0,
+                    "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZXhwIjoxNjAxOTA0MzU1fQ.PxvBg4qUp07JrKWG2LykVClvDg05LaLn2gsohHrRpiE"
+                },
+                "status": "Pending",
+                "accept": false
+            }
+
+## Provide Delivery [/api/provide-delivery/]
+
+### Provide Delivery List [GET]
+
++ Response 200 (application/json)
+
+        {
+            "id": 3,
+            "requester": null,
+            "provider": {
+                "id": 1,
+                "first_name": "",
+                "last_name": "",
+                "username": "admin",
+                "email": "admin@mail.ru",
+                "birthday": null,
+                "age": 0,
+                "gender": "",
+                "phone": null,
+                "address": null,
+                "zip_code": null,
+                "country": null,
+                "city": null,
+                "state": null,
+                "points": 20,
+                "rating_count": 0,
+                "avg_rating": 0,
+                "avg_rating_last_ten": 0,
+                "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZXhwIjoxNjAxOTA1NjI2fQ.bw5G6pYKTPwc1RvJOP8sy7OxPGllsPY9mZS1Kzno0K8"
+            },
+            "departure_location": "Kyrgyzstan",
+            "departure_date": "2020-08-06",
+            "arrival_location": "Location",
+            "arrival_date": "2020-06-18T12:07:46Z", 
+            "title": "Title",
+            "hosting_type": "Private bedroom",
+            "status": "Created, not accepted",
+            "created": "2020-08-06",
+            "is_checked": true
+        }
+
+### Create Provide Delivery [POST]
+
++ Request (application/json)
+
+        {
+            "requester": null,
+            "provider": 1,
+            "departure_location": "Kyrgyzstan",
+            "departure_date": "2020-08-06",
+            "arrival_location": "Location",
+            "arrival_date": "2020-06-18T12:07:46Z", 
+            "title": "Title",
+            "hosting_type": "Private bedroom",
+            "status": "Created, not accepted",
+        }
+
++ Response 201 (application/json)
+
+    + Headers
+
+            Location: /api/service/
+
+    + Body
+
+            {
+                "id": 3,
+                "requester": null,
+                "provider": {
+                    "id": 1,
+                    "first_name": "",
+                    "last_name": "",
+                    "username": "admin",
+                    "email": "admin@mail.ru",
+                    "birthday": null,
+                    "age": 0,
+                    "gender": "",
+                    "phone": null,
+                    "address": null,
+                    "zip_code": null,
+                    "country": null,
+                    "city": null,
+                    "state": null,
+                    "points": 20,
+                    "rating_count": 0,
+                    "avg_rating": 0,
+                    "avg_rating_last_ten": 0,
+                    "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZXhwIjoxNjAxOTA1NjI2fQ.bw5G6pYKTPwc1RvJOP8sy7OxPGllsPY9mZS1Kzno0K8"
+                },
+                "departure_location": "Kyrgyzstan",
+                "departure_date": "2020-08-06",
+                "arrival_location": "Location",
+                "arrival_date": "2020-06-18T12:07:46Z", 
+                "title": "Title",
+                "hosting_type": "Private bedroom",
+                "status": "Created, not accepted",
+                "created": "2020-08-06",
+                "is_checked": true
+            }
+
+## Provide Pick Up [/api/provide-pickup/]
+
+### Provide Pick Up List [GET]
+
++ Response 200 (application/json)
+
+        {
+            "id": 3,
+            "requester": null,
+            "provider": {
+                "id": 1,
+                "first_name": "",
+                "last_name": "",
+                "username": "admin",
+                "email": "admin@mail.ru",
+                "birthday": null,
+                "age": 0,
+                "gender": "",
+                "phone": null,
+                "address": null,
+                "zip_code": null,
+                "country": null,
+                "city": null,
+                "state": null,
+                "points": 20,
+                "rating_count": 0,
+                "avg_rating": 0,
+                "avg_rating_last_ten": 0,
+                "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZXhwIjoxNjAxOTA1NjI2fQ.bw5G6pYKTPwc1RvJOP8sy7OxPGllsPY9mZS1Kzno0K8"
+            },
+            "pickup_location": "Kyrgyzstan",
+            "pickup_date": "2020-08-06",
+            "title": "Title",
+            "text": "Text",
+            "status": "Created, not accepted",
+            "created": "2020-08-06",
+            "is_checked": true
+        }
+
+### Create Provide Pick Up [POST]
+
++ Request (application/json)
+
+        {
+            "requester": null,
+            "provider": 1,
+            "pickup_location": "Kyrgyzstan",
+            "pickup_date": "2020-08-06",
+            "title": "Title",
+            "text": "Text",
+            "status": "Created, not accepted",
+        }
+
++ Response 201 (application/json)
+
+    + Headers
+
+            Location: /api/service/
+
+    + Body
+
+            {
+                "id": 3,
+                "requester": null,
+                "provider": {
+                    "id": 1,
+                    "first_name": "",
+                    "last_name": "",
+                    "username": "admin",
+                    "email": "admin@mail.ru",
+                    "birthday": null,
+                    "age": 0,
+                    "gender": "",
+                    "phone": null,
+                    "address": null,
+                    "zip_code": null,
+                    "country": null,
+                    "city": null,
+                    "state": null,
+                    "points": 20,
+                    "rating_count": 0,
+                    "avg_rating": 0,
+                    "avg_rating_last_ten": 0,
+                    "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZXhwIjoxNjAxOTA1NjI2fQ.bw5G6pYKTPwc1RvJOP8sy7OxPGllsPY9mZS1Kzno0K8"
+                },
+                "location": "Kyrgyzstan",
+                "hosting_date": "2020-08-06",
+                "title": "Title",
+                "text": "Text",
+                "status": "Created, not accepted",
+                "created": "2020-08-06",
+                "is_checked": true
+            }
+
+## Provide Hosting [/api/provide-hosting/]
+
+### Provide Hosting List [GET]
+
++ Response 200 (application/json)
+
+        {
+            "id": 3,
+            "requester": null,
+            "provider": {
+                "id": 1,
+                "first_name": "",
+                "last_name": "",
+                "username": "admin",
+                "email": "admin@mail.ru",
+                "birthday": null,
+                "age": 0,
+                "gender": "",
+                "phone": null,
+                "address": null,
+                "zip_code": null,
+                "country": null,
+                "city": null,
+                "state": null,
+                "points": 20,
+                "rating_count": 0,
+                "avg_rating": 0,
+                "avg_rating_last_ten": 0,
+                "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZXhwIjoxNjAxOTA1NjI2fQ.bw5G6pYKTPwc1RvJOP8sy7OxPGllsPY9mZS1Kzno0K8"
+            },
+            "location": "Location",
+            "hosting_date": "2020-06-18",
+            "title": "Title",
+            "text": "Text",
+            "hosting_type": "Private bedroom",
+            "status": "Created, not accepted",
+            "created": "2020-08-06",
+            "is_checked": true
+        }
+
+### Create Provide Hosting [POST]
+
++ Request (application/json)
+
+        {
+            "requester": null,
+            "provider": 1,
+            "location": "Kyrgyzstan",
+            "hosting_date": "2020-08-06",
+            "title": "Title",
+            "text": "Text",
+            "hosting_type": "Private bedroom",
+            "status": "Created, not accepted",
+        }
+
++ Response 201 (application/json)
+
+    + Headers
+
+            Location: /api/service/
+
+    + Body
+
+            {
+                "id": 3,
+                "requester": null,
+                "provider": {
+                    "id": 1,
+                    "first_name": "",
+                    "last_name": "",
+                    "username": "admin",
+                    "email": "admin@mail.ru",
+                    "birthday": null,
+                    "age": 0,
+                    "gender": "",
+                    "phone": null,
+                    "address": null,
+                    "zip_code": null,
+                    "country": null,
+                    "city": null,
+                    "state": null,
+                    "points": 20,
+                    "rating_count": 0,
+                    "avg_rating": 0,
+                    "avg_rating_last_ten": 0,
+                    "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZXhwIjoxNjAxOTA1NjI2fQ.bw5G6pYKTPwc1RvJOP8sy7OxPGllsPY9mZS1Kzno0K8"
+                },
+                "location": "Location",
+                "hosting_date": "2020-06-18",
+                "title": "Title",
+                "text": "Text",
+                "hosting_type": "Private bedroom",
+                "status": "Created, not accepted",
+                "created": "2020-08-06",
+                "is_checked": true
+            }
+
+## Request Service Provide [/api/request-provide-delivery/]
+
+### Requset Service Provide List [GET]
+
++ Response 200 (application/json)
+
+        <!--/api/request-delivery/-->
+        <!--/api/request-hosting/-->
+        <!--/api/request-pickup/-->
+        {
+            "id": 1,
+            "service": {
+                "id": 1,
+                "requester": {
+                    "first_name": "",
+                    "last_name": "",
+                    "username": "Admin",
+                    "email": "tektonik_boy98@mail.ru",
+                    "birthday": null,
+                    "age": 0,
+                    "gender": "",
+                    "phone": null,
+                    "address": null,
+                    "zip_code": null,
+                    "country": null,
+                    "city": null,
+                    "state": null,
+                    "points": 0,
+                    "rating_count": 0,
+                    "avg_rating": 0,
+                    "avg_rating_last_ten": 0,
+                    "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZXhwIjoxNjAxOTA0MzU1fQ.PxvBg4qUp07JrKWG2LykVClvDg05LaLn2gsohHrRpiE"
+                },
+                "provider": null,
+                "pickup_location": "das",
+                "drop_off_location": "asdasdas",
+                "deadline": "2020-08-06",
+                "status": "Created, not accepted",
+                "title": "Title",
+                "text": "asasssdf",
+                "created": "2020-08-06",
+                "is_checked": true
+            },
+            "requester": {
+                "first_name": "",
+                "last_name": "",
+                "username": "Admin",
+                "email": "tektonik_boy98@mail.ru",
+                "birthday": null,
+                "age": 0,
+                "gender": "",
+                "phone": null,
+                "address": null,
+                "zip_code": null,
+                "country": null,
+                "city": null,
+                "state": null,
+                "points": 0,
+                "rating_count": 0,
+                "avg_rating": 0,
+                "avg_rating_last_ten": 0,
+                "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZXhwIjoxNjAxOTA0MzU1fQ.PxvBg4qUp07JrKWG2LykVClvDg05LaLn2gsohHrRpiE"
+            },
+            "status": "Pending",
+            "accept": false
+        }
+
+### Request Service [POST]
+
++ Request (application/json)
+
+        {
+            "service": 1,
+            "requester": 1,
+            "status": "Pending",
+            "accept": false
+        }
+
++ Response 201 (application/json)
+
+    + Headers
+
+            Location: /api/request-provide-delivery/
+
+    + Body
+
+            <!--/api/request-provide-delivery/-->
+            <!--/api/request-provide-hosting/-->
+            <!--/api/request-provide-pickup/-->
+            {
+                "id": 1,
+                "service": {
+                    "id": 1,
+                    "requester": {
+                        "first_name": "",
+                        "last_name": "",
+                        "username": "Admin",
+                        "email": "tektonik_boy98@mail.ru",
+                        "birthday": null,
+                        "age": 0,
+                        "gender": "",
+                        "phone": null,
+                        "address": null,
+                        "zip_code": null,
+                        "country": null,
+                        "city": null,
+                        "state": null,
+                        "points": 0,
+                        "rating_count": 0,
+                        "avg_rating": 0,
+                        "avg_rating_last_ten": 0,
+                        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZXhwIjoxNjAxOTA0MzU1fQ.PxvBg4qUp07JrKWG2LykVClvDg05LaLn2gsohHrRpiE"
+                    },
+                    "provider": null,
+                    "pickup_location": "das",
+                    "drop_off_location": "asdasdas",
+                    "deadline": "2020-08-06",
+                    "status": "Created, not accepted",
+                    "title": "Title",
+                    "text": "asasssdf",
+                    "created": "2020-08-06",
+                    "is_checked": true
+                },
+                "requester": {
+                    "first_name": "",
+                    "last_name": "",
+                    "username": "Admin",
+                    "email": "tektonik_boy98@mail.ru",
+                    "birthday": null,
+                    "age": 0,
+                    "gender": "",
+                    "phone": null,
+                    "address": null,
+                    "zip_code": null,
+                    "country": null,
+                    "city": null,
+                    "state": null,
+                    "points": 0,
+                    "rating_count": 0,
+                    "avg_rating": 0,
+                    "avg_rating_last_ten": 0,
+                    "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZXhwIjoxNjAxOTA0MzU1fQ.PxvBg4qUp07JrKWG2LykVClvDg05LaLn2gsohHrRpiE"
+                },
+                "status": "Pending",
+                "accept": false
+            }
