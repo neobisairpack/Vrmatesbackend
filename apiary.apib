@@ -98,6 +98,28 @@ HOST: https://vrmates.kg/
                 "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZXhwIjoxNTk3NjczNjI0fQ.WlkOhSg4z7FWKWNHB5dpkiSXm2flXBYD3XeR0ZRL8tY"
             }
 
+## Reset Password [/users/rest-auth/password/reset/]
+
+### Reset User's Password [POST]
+
++ Request (application/json)
+
+        {
+            "email": "aleksei.chirkov.98@mail.ru",
+        }
+
++ Response 201 (application/json)
+
+    + Headers
+
+            Location: /users/rest-auth/password/reset/
+
+    + Body
+
+            {
+                "detail": "Password reset e-mail has been sent."
+            }
+
 ## Rating [/users/rating/]
 
 ### Rating List [GET]
