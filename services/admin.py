@@ -131,14 +131,52 @@ class ProvideHostingAdmin(admin.ModelAdmin):
         obj.save()
 
 
+class RequestProvideDeliveryAdmin(admin.ModelAdmin):
+    list_display = [field.name for field in RequestProvideDelivery._meta.fields]
+
+    class Meta:
+        model = RequestProvideDelivery
+
+    def save_model(self, request, obj, form, change):
+        obj.requester = request.user
+        obj.save()
+
+
+class RequestProvidePickUpAdmin(admin.ModelAdmin):
+    list_display = [field.name for field in RequestProvidePickUp._meta.fields]
+
+    class Meta:
+        model = RequestProvidePickUp
+
+    def save_model(self, request, obj, form, change):
+        obj.requester = request.user
+        obj.save()
+
+
+class RequestProvideHostingAdmin(admin.ModelAdmin):
+    list_display = [field.name for field in RequestProvideHosting._meta.fields]
+
+    class Meta:
+        model = RequestProvideHosting
+
+    def save_model(self, request, obj, form, change):
+        obj.requester = request.user
+        obj.save()
+
+
 admin.site.register(Delivery, DeliveryAdmin)
 admin.site.register(DeliveryImage, DeliveryImageAdmin)
 admin.site.register(RequestDelivery, RequestDeliveryAdmin)
 admin.site.register(PickUp, PickUpAdmin)
+admin.site.register(PickUpImage, PickUpImageAdmin)
 admin.site.register(RequestPickUp, RequestPickUpAdmin)
 admin.site.register(Hosting, HostingAdmin)
+admin.site.register(HostingImage, HostingImageAdmin)
 admin.site.register(RequestHosting, RequestHostingAdmin)
 admin.site.register(Support, SupportAdmin)
 admin.site.register(ProvideDelivery, ProvideDeliveryAdmin)
+admin.site.register(RequestProvideDelivery, RequestProvideDeliveryAdmin)
 admin.site.register(ProvidePickUp, ProvidePickUpAdmin)
+admin.site.register(RequestProvidePickUp, RequestProvidePickUpAdmin)
 admin.site.register(ProvideHosting, ProvideHostingAdmin)
+admin.site.register(RequestProvideHosting, RequestProvideHostingAdmin)
