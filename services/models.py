@@ -267,6 +267,7 @@ class Hosting(models.Model):
                                  blank=True, null=True)
     title = models.CharField(max_length=128)
     text = models.TextField(max_length=512)
+    requester_from = models.CharField(max_length=128, default=None)
     location = models.CharField(max_length=128, default=None)
     preferences = models.CharField(max_length=64, choices=PREFS)
     date = models.DateField()
