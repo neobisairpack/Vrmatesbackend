@@ -8,21 +8,13 @@ from rest_framework.exceptions import ParseError
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.generics import RetrieveUpdateAPIView, UpdateAPIView
+from rest_framework.generics import RetrieveUpdateAPIView
 from django.template.loader import render_to_string
-from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.contrib.sites.shortcuts import get_current_site
 
-from .models import User, Rating
 from .tokens import account_activation_token
 from .permissions import IsOwnerOrReadOnly
-from .serializers import (
-    RegistrationSerializer,
-    LoginSerializer,
-    UserSerializer,
-    RatingSerializer,
-    RatingReadableSerializer
-)
+from .serializers import *
 
 
 def activate(request, uid64, token):

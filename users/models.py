@@ -4,22 +4,15 @@ import datetime
 from datetime import datetime, timedelta
 from django.db import models
 from django.conf import settings
-from django.dispatch import receiver
 from django.core.mail import EmailMessage
 from django.core.paginator import Paginator
-from django.template.loader import render_to_string
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db.models.signals import post_save
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.dispatch import receiver
+from django.template.loader import render_to_string
 
 from services import models as service_models
-
-
-# 1) Search users with Email
-# 2) Search users with is_active
-# 3) Search ratings with requester
-# 4) Search ratings with title
-# 5) Search ratings with date
 
 
 class MyUserManager(BaseUserManager):
