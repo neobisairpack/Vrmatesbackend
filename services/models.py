@@ -16,9 +16,7 @@ class Delivery(models.Model):
     )
     requester = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='delivery_requester',
                                   blank=True, null=True)
-    provider = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='delivery_provider',
-                                 blank=True, null=True)
-    pickup_location = models.CharField(max_length=128)
+    pickup_location = models.CharField(max_length=128, blank=True, null=True)
     drop_off_location = models.CharField(max_length=128)
     deadline = models.DateField()
     status = models.CharField(choices=STATUS, max_length=64, default='Created, not accepted')
@@ -45,13 +43,6 @@ class DeliveryImage(models.Model):
 
     def __str__(self):
         return str(self.post)
-
-
-@receiver(post_save, sender=Delivery)
-def save_delivery_image(sender, instance, created, **kwargs):
-    if created:
-        image, created = DeliveryImage.objects.get_or_create(post=instance)
-        image.save()
 
 
 class RequestDelivery(models.Model):
@@ -144,8 +135,6 @@ class PickUp(models.Model):
     )
     requester = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='pickup_requester',
                                   null=True, blank=True)
-    provider = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='pickup_provider',
-                                 blank=True, null=True)
     pickup_location = models.CharField(max_length=128)
     drop_off_location = models.CharField(max_length=128)
     deadline = models.DateTimeField()
@@ -270,8 +259,6 @@ class Hosting(models.Model):
     )
     requester = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='hosting_requester',
                                   null=True, blank=True)
-    provider = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='hosting_provider',
-                                 blank=True, null=True)
     title = models.CharField(max_length=128)
     text = models.TextField(max_length=512, null=True, blank=True)
     requester_from = models.CharField(max_length=128, default=None)
@@ -402,8 +389,6 @@ class ProvideDelivery(models.Model):
     )
     provider = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='delivery_prov',
                                  null=True, blank=True)
-    requester = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='delivery_req',
-                                  null=True, blank=True)
     departure_location = models.CharField(max_length=128)
     departure_date = models.DateField()
     arrival_location = models.CharField(max_length=128)
@@ -498,8 +483,6 @@ class ProvidePickUp(models.Model):
     )
     provider = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='pickup_prov',
                                  null=True, blank=True)
-    requester = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='pickup_req',
-                                  null=True, blank=True)
     pickup_location = models.CharField(max_length=128)
     pickup_date = models.DateField()
     title = models.CharField(max_length=64)
@@ -598,8 +581,6 @@ class ProvideHosting(models.Model):
     )
     provider = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='hosting_prov',
                                  null=True, blank=True)
-    requester = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='hosting_req',
-                                  null=True, blank=True)
     location = models.CharField(max_length=128)
     hosting_date = models.DateField()
     title = models.CharField(max_length=64)

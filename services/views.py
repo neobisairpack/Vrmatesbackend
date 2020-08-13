@@ -10,7 +10,7 @@ from .serializers import *
 
 
 class DeliveryViewSet(viewsets.ModelViewSet):
-    permission_classes = (IsAuthenticated, )
+    # permission_classes = (IsAuthenticated, )
     queryset = Delivery.objects.filter(is_checked=True)
     serializer_class = DeliverySerializer
 

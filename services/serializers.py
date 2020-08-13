@@ -4,12 +4,34 @@ from .models import *
 from users.serializers import UserSerializer
 
 
+class DeliveryImagesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DeliveryImage
+        fields = '__all__'
+
+
 class DeliverySerializer(serializers.ModelSerializer):
     requester = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    images = DeliveryImagesSerializer(source='image_set', many=True, read_only=True)
 
     class Meta:
         model = Delivery
         fields = '__all__'
+
+    def create(self, validated_data):
+        images_data = self.context.get('view').request.FILES
+        post = Delivery.objects.create(
+            requester=self.requester,
+            pickup_location=validated_data.get('pickup_location'),
+            drop_off_location=validated_data.get('pickup_location'),
+            deadline=validated_data.get('deadline'),
+            status=validated_data.get('status'),
+            title=validated_data.get('title'),
+            text=validated_data.get('text'),
+        )
+        for image_data in images_data.values():
+            DeliveryImage.objects.create(post=post, image=image_data)
+        return post
 
 
 class DeliveryReadableSerializer(serializers.ModelSerializer):
@@ -18,12 +40,6 @@ class DeliveryReadableSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Delivery
-        fields = '__all__'
-
-
-class DeliveryImagesSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = DeliveryImage
         fields = '__all__'
 
 
