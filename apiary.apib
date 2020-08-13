@@ -410,11 +410,13 @@ HOST: https://vrmates.kg/
             "title": "Title",
             "text": "Text",
             "preferences": "Private bedroom",
+            "requester_from": "Location",
+            "location": "Location",
             "status": "Created, not accepted",
             "is_checked": true
         }
 
-### Create Service [POST]
+### Create Hosting [POST]
 
 + Request (application/json)
 
@@ -430,6 +432,8 @@ HOST: https://vrmates.kg/
                 "Living room",
                 "Common space"
             ],
+            "requester_from": "Location",
+            "location": "Location",
             "status": [                  <!-- By default Created, not accepted-->
                 "Created, not accepted",
                 "Accepted/in process",
@@ -455,6 +459,8 @@ HOST: https://vrmates.kg/
                 "title": "Title",
                 "text": "Text",
                 "preferences": "Private bedroom",
+                "requester_from": "Location",
+                "location": "Location",
                 "status": "Created, not accepted",
                 "is_checked": false,
                 "requester": 1,
