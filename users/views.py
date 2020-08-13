@@ -1,4 +1,4 @@
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, JsonResponse
 from django.core.mail import EmailMessage
 from django.contrib.auth import login
 from django.utils.encoding import force_bytes, force_text
@@ -94,6 +94,23 @@ class UserRetrieveUpdateAPIView(RetrieveUpdateAPIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class UserUpdateAPIView(APIView):
+    # permission_classes = (IsAuthenticated, )
+    serializer_class = UserSerializer
+    queryset = User.objects.all()
+
+    def post(self, request):
+        try:
+            serializer = self.serializer_class(request.user, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except:
+            return JsonResponse({'status': 0, 'message': 'Error on user update'})
 
 
 class CurrentUserView(APIView):

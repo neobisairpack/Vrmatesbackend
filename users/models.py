@@ -156,8 +156,10 @@ def banned_notifications(sender, instance, created, **kwargs):
 
 
 class Rating(models.Model):
-    requester = models.ForeignKey('users.User', verbose_name='rater', on_delete=models.CASCADE, related_name='give_rate')
-    provider = models.ForeignKey('users.User', verbose_name='receiver', on_delete=models.CASCADE, related_name='receive_rate')
+    requester = models.ForeignKey('users.User', verbose_name='rater',
+                                  on_delete=models.CASCADE, related_name='give_rate')
+    provider = models.ForeignKey('users.User', verbose_name='receiver',
+                                 on_delete=models.CASCADE, related_name='receive_rate')
     rating = models.FloatField(validators=(MinValueValidator(1.0), MaxValueValidator(5.0)))
     text = models.TextField(max_length=512)
     image = models.ImageField(upload_to='ratings')
