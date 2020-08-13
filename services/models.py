@@ -23,7 +23,7 @@ class Delivery(models.Model):
     deadline = models.DateField()
     status = models.CharField(choices=STATUS, max_length=64, default='Created, not accepted')
     title = models.CharField(max_length=128)
-    text = models.TextField(max_length=512)
+    text = models.TextField(max_length=512, null=True, blank=True)
     created = models.DateField(auto_now_add=True)
     is_checked = models.BooleanField(default=False)
 
@@ -45,6 +45,13 @@ class DeliveryImage(models.Model):
 
     def __str__(self):
         return str(self.post)
+
+
+@receiver(post_save, sender=Delivery)
+def save_delivery_image(sender, instance, created, **kwargs):
+    if created:
+        image, created = DeliveryImage.objects.get_or_create(post=instance)
+        image.save()
 
 
 class RequestDelivery(models.Model):
@@ -144,7 +151,7 @@ class PickUp(models.Model):
     deadline = models.DateTimeField()
     status = models.CharField(choices=STATUS, max_length=64, default='Created, not accepted')
     title = models.CharField(max_length=128)
-    text = models.TextField(max_length=512)
+    text = models.TextField(max_length=512, null=True, blank=True)
     created = models.DateField(auto_now_add=True)
     is_checked = models.BooleanField(default=False)
 
@@ -266,7 +273,7 @@ class Hosting(models.Model):
     provider = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='hosting_provider',
                                  blank=True, null=True)
     title = models.CharField(max_length=128)
-    text = models.TextField(max_length=512)
+    text = models.TextField(max_length=512, null=True, blank=True)
     requester_from = models.CharField(max_length=128, default=None)
     location = models.CharField(max_length=128, default=None)
     preferences = models.CharField(max_length=64, choices=PREFS)
@@ -402,7 +409,7 @@ class ProvideDelivery(models.Model):
     arrival_location = models.CharField(max_length=128)
     arrival_date = models.DateTimeField()
     title = models.CharField(max_length=64)
-    text = models.TextField(max_length=640)
+    text = models.TextField(max_length=640, null=True, blank=True)
     status = models.CharField(choices=STATUS, max_length=64)
     created = models.DateField(auto_now_add=True)
     is_checked = models.BooleanField(default=False)
@@ -496,7 +503,7 @@ class ProvidePickUp(models.Model):
     pickup_location = models.CharField(max_length=128)
     pickup_date = models.DateField()
     title = models.CharField(max_length=64)
-    text = models.TextField(max_length=640)
+    text = models.TextField(max_length=640, null=True, blank=True)
     status = models.CharField(choices=STATUS, max_length=64)
     created = models.DateField(auto_now_add=True)
     is_checked = models.BooleanField(default=False)
@@ -596,7 +603,7 @@ class ProvideHosting(models.Model):
     location = models.CharField(max_length=128)
     hosting_date = models.DateField()
     title = models.CharField(max_length=64)
-    text = models.CharField(max_length=640)
+    text = models.CharField(max_length=640, null=True, blank=True)
     hosting_type = models.CharField(max_length=64, choices=HOSTING)
     status = models.CharField(choices=STATUS, max_length=64)
     created = models.DateField(auto_now_add=True)

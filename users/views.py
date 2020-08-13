@@ -2,6 +2,7 @@ from django.http import HttpResponse, Http404
 from django.core.mail import EmailMessage
 from django.contrib.auth import login
 from django.utils.encoding import force_bytes, force_text
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from rest_framework import status, viewsets, generics
 from rest_framework.filters import SearchFilter
 from rest_framework.exceptions import ParseError
@@ -76,7 +77,7 @@ class LoginAPIView(APIView):
 
 
 class UserRetrieveUpdateAPIView(RetrieveUpdateAPIView):
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (IsOwnerOrReadOnly, )
     serializer_class = UserSerializer
     queryset = User.objects.all()
 
@@ -93,6 +94,14 @@ class UserRetrieveUpdateAPIView(RetrieveUpdateAPIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class CurrentUserView(APIView):
+    serializer_class = UserSerializer
+
+    def get(self, request):
+        serializer = self.serializer_class(request.user)
+        return Response(serializer.data)
 
 
 class UserListAPIView(generics.ListAPIView):

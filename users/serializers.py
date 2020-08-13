@@ -3,11 +3,42 @@ import datetime
 from rest_framework import serializers
 from django.contrib.auth import authenticate
 from dateutil.relativedelta import relativedelta
-from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from django.utils.encoding import smart_str, force_str, smart_bytes, DjangoUnicodeDecodeError
-from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 
 from .models import User, Rating
+
+
+class UserSerializer(serializers.ModelSerializer):
+    age = serializers.SerializerMethodField()
+    password = serializers.CharField(
+        max_length=128,
+        min_length=8,
+        write_only=True
+    )
+
+    class Meta:
+        model = User
+        fields = '__all__'
+        read_only_fields = ['token', ]
+
+    def get_age(self, instance):
+        age = relativedelta(datetime.datetime.now(), instance.birthday).years
+        return age
+
+    def points_validation(self, instance):
+        if instance.points < 20:
+            return "You have no points"
+
+    def update(self, instance, validated_data):
+        password = validated_data.pop('password', None)
+
+        for (key, value) in validated_data.items():
+            setattr(instance, key, value)
+
+        if password is not None:
+            instance.set_password(password)
+
+        instance.save()
+        return instance
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
@@ -29,8 +60,8 @@ class RegistrationSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
-            'id', 'first_name', 'last_name', 'username', 'email', 'birthday', 'gender', 'phone',
-            'address', 'zip_code', 'country', 'city', 'state', 'password', 'password2', 'token'
+            'id', 'first_name', 'last_name', 'username', 'email', 'birthday', 'gender', 'phone', 'about_me',
+            'image', 'address', 'zip_code', 'country', 'city', 'state', 'password', 'password2', 'token'
         ]
         extra_kwargs = {
             'password': {'write_only': True}
@@ -49,7 +80,9 @@ class RegistrationSerializer(serializers.ModelSerializer):
             zip_code=self.validated_data['zip_code'],
             country=self.validated_data['country'],
             city=self.validated_data['city'],
-            state=self.validated_data['state']
+            state=self.validated_data['state'],
+            about_me=self.validated_data['about_me'],
+            image=self.validated_data['image']
         )
         password = self.validated_data['password']
         password2 = self.validated_data['password2']
@@ -88,48 +121,7 @@ class LoginSerializer(serializers.Serializer):
                 'A user with this email and password was not found or has been banned.'
             )
 
-        return {
-            'email': user.email,
-            'token': user.token,
-        }
-
-
-class UserSerializer(serializers.ModelSerializer):
-    age = serializers.SerializerMethodField()
-    password = serializers.CharField(
-        max_length=128,
-        min_length=8,
-        write_only=True
-    )
-
-    class Meta:
-        model = User
-        fields = [
-            'id', 'first_name', 'last_name', 'username', 'email', 'birthday', 'age', 'gender',
-            'phone', 'address', 'zip_code', 'country', 'city', 'state',
-            'points', 'rating_count', 'avg_rating', 'avg_rating_last_ten', 'password', 'token'
-        ]
-        read_only_fields = ['token', ]
-
-    def get_age(self, instance):
-        age = relativedelta(datetime.datetime.now(), instance.birthday).years
-        return age
-
-    def points_validation(self, instance):
-        if instance.points < 20:
-            return "You have no points"
-
-    def update(self, instance, validated_data):
-        password = validated_data.pop('password', None)
-
-        for (key, value) in validated_data.items():
-            setattr(instance, key, value)
-
-        if password is not None:
-            instance.set_password(password)
-
-        instance.save()
-        return instance
+        return user
 
 
 class RatingSerializer(serializers.ModelSerializer):

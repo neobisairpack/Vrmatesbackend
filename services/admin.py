@@ -9,10 +9,6 @@ class DeliveryAdmin(admin.ModelAdmin):
     class Meta:
         model = Delivery
 
-    def save_model(self, request, obj, form, change):
-        obj.requester = request.user
-        obj.save()
-
 
 class DeliveryImageAdmin(admin.ModelAdmin):
     list_display = [field.name for field in DeliveryImage._meta.fields]
@@ -27,20 +23,12 @@ class RequestDeliveryAdmin(admin.ModelAdmin):
     class Meta:
         model = RequestDelivery
 
-    def save_model(self, request, obj, form, change):
-        obj.requester = request.user
-        obj.save()
-
 
 class PickUpAdmin(admin.ModelAdmin):
     list_display = [field.name for field in PickUp._meta.fields]
 
     class Meta:
         model = PickUp
-
-    def save_model(self, request, obj, form, change):
-        obj.requester = request.user
-        obj.save()
 
 
 class PickUpImageAdmin(admin.ModelAdmin):
@@ -56,20 +44,12 @@ class RequestPickUpAdmin(admin.ModelAdmin):
     class Meta:
         model = RequestPickUp
 
-    def save_model(self, request, obj, form, change):
-        obj.requester = request.user
-        obj.save()
-
 
 class HostingAdmin(admin.ModelAdmin):
     list_display = [field.name for field in Hosting._meta.fields]
 
     class Meta:
         model = Hosting
-
-    def save_model(self, request, obj, form, change):
-        obj.requester = request.user
-        obj.save()
 
 
 class HostingImageAdmin(admin.ModelAdmin):
@@ -84,10 +64,6 @@ class RequestHostingAdmin(admin.ModelAdmin):
 
     class Meta:
         model = RequestHosting
-
-    def save_model(self, request, obj, form, change):
-        obj.requester = request.user
-        obj.save()
 
 
 class SupportAdmin(admin.ModelAdmin):
@@ -104,20 +80,12 @@ class ProvideDeliveryAdmin(admin.ModelAdmin):
     class Meta:
         model = ProvideDelivery
 
-    def save_model(self, request, obj, form, change):
-        obj.provider = request.user
-        obj.save()
-
 
 class ProvidePickUpAdmin(admin.ModelAdmin):
     list_display = [field.name for field in ProvidePickUp._meta.fields]
 
     class Meta:
         model = ProvidePickUp
-
-    def save_model(self, request, obj, form, change):
-        obj.provider = request.user
-        obj.save()
 
 
 class ProvideHostingAdmin(admin.ModelAdmin):
@@ -126,20 +94,12 @@ class ProvideHostingAdmin(admin.ModelAdmin):
     class Meta:
         model = ProvideHosting
 
-    def save_model(self, request, obj, form, change):
-        obj.provider = request.user
-        obj.save()
-
 
 class RequestProvideDeliveryAdmin(admin.ModelAdmin):
     list_display = [field.name for field in RequestProvideDelivery._meta.fields]
 
     class Meta:
         model = RequestProvideDelivery
-
-    def save_model(self, request, obj, form, change):
-        obj.requester = request.user
-        obj.save()
 
 
 class RequestProvidePickUpAdmin(admin.ModelAdmin):
@@ -148,20 +108,12 @@ class RequestProvidePickUpAdmin(admin.ModelAdmin):
     class Meta:
         model = RequestProvidePickUp
 
-    def save_model(self, request, obj, form, change):
-        obj.requester = request.user
-        obj.save()
-
 
 class RequestProvideHostingAdmin(admin.ModelAdmin):
     list_display = [field.name for field in RequestProvideHosting._meta.fields]
 
     class Meta:
         model = RequestProvideHosting
-
-    def save_model(self, request, obj, form, change):
-        obj.requester = request.user
-        obj.save()
 
 
 admin.site.register(Delivery, DeliveryAdmin)
