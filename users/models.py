@@ -57,7 +57,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     birthday = models.DateField(null=True)
     gender = models.CharField(max_length=16, choices=USER_GENDER)
-    phone = models.CharField(max_length=64, unique=True, null=True, blank=True)
+    phone = models.CharField(max_length=64, unique=True)
     country = models.CharField(max_length=128, null=True, blank=True)
     zip_code = models.CharField(max_length=32, null=True, blank=True)
     state = models.CharField(max_length=128, null=True, blank=True)
