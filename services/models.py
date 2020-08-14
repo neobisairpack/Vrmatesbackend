@@ -38,7 +38,8 @@ class Delivery(models.Model):
 
 
 class DeliveryImage(models.Model):
-    post = models.ForeignKey(Delivery, default=None, on_delete=models.CASCADE)
+    post = models.ForeignKey(Delivery, default=None, on_delete=models.CASCADE,
+                             blank=True, null=True)
     image = models.ImageField(upload_to='deliveries')
 
     def __str__(self):

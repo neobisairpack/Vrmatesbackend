@@ -12,7 +12,7 @@ class DeliveryImagesSerializer(serializers.ModelSerializer):
 
 class DeliverySerializer(serializers.ModelSerializer):
     requester = serializers.HiddenField(default=serializers.CurrentUserDefault())
-    images = DeliveryImagesSerializer(source='image_set', many=True, read_only=True)
+    images = DeliveryImagesSerializer(source='image_set', many=True, required=False, read_only=True)
 
     class Meta:
         model = Delivery
