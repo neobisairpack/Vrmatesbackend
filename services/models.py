@@ -166,6 +166,7 @@ class ProvideService(models.Model):
         ('Accepted/in process', 'Accepted/in process'),
         ('Successfully done', 'Successfully done'),
         ('Not confirmed', 'Not confirmed'),
+        ('Expired', 'Expired'),
         ('Canceled', 'Canceled')
     )
     TYPE = (
@@ -189,9 +190,9 @@ class ProvideService(models.Model):
     pickup_location = models.CharField(max_length=128, blank=True, null=True)
     drop_off_location = models.CharField(max_length=128, blank=True, null=True)
     deadline = models.DateField(blank=True, null=True)
-    title = models.CharField(max_length=64)
+    title = models.CharField(max_length=64, blank=True, null=True)
     text = models.TextField(max_length=640, null=True, blank=True)
-    status = models.CharField(choices=STATUS, max_length=64)
+    status = models.CharField(choices=STATUS, max_length=64, blank=True, null=True, default='Created, not accepted')
     created = models.DateField(auto_now_add=True)
     is_checked = models.BooleanField(default=False)
 
@@ -206,12 +207,23 @@ class RequestProvideService(models.Model):
         ('Canceled', 'Canceled'),
     )
     requester = models.ForeignKey('users.User', on_delete=models.CASCADE, blank=True, null=True)
-    service = models.ForeignKey(Service, on_delete=models.CASCADE)
+    service = models.ForeignKey(ProvideService, on_delete=models.CASCADE)
     status = models.CharField(choices=STATUS, max_length=64, default='Pending')
     accept = models.BooleanField(default=False)
 
     def __str__(self):
         return '%s' % self.service
+
+
+@receiver(post_save, sender=RequestProvideService)
+def service_status(sender, instance, created, **kwargs):
+    if instance.status == 'Accepted':
+        status = 'Accepted/in process'
+        requester = instance.requester
+        service = instance.service
+        service.requester = requester
+        service.status = status
+        service.save()
 
 
 @receiver(post_save, sender=ProvideService)
@@ -246,6 +258,17 @@ def service_provide_cancel_points_back(sender, instance, created, **kwargs):
         instance.provider.points += 10
     elif instance.status == 'Canceled' and timer < 2:
         instance.provider.points += 20
+
+
+@receiver(post_save, sender=ProvideService)
+def service_expired(sender, instance, created, **kwargs):
+    deadline = instance.deadline
+    today = datetime.date.today()
+    timer = int(deadline.day) - int(today.day)
+    if timer < 0:
+        service = instance
+        service.status = 'Expired'
+        service.save()
 
 
 @receiver(post_save, sender=ProvideService)
