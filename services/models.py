@@ -168,12 +168,27 @@ class ProvideService(models.Model):
         ('Not confirmed', 'Not confirmed'),
         ('Canceled', 'Canceled')
     )
-    provider = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='delivery_prov',
+    TYPE = (
+        ('Delivery', 'Delivery'),
+        ('Pick Up', 'Pick Up'),
+        ('Hosting', 'Hosting'),
+    )
+    PREFS = (
+        ('Private bedroom', 'Private bedroom'),
+        ('Living room', 'Living room'),
+        ('Common space', 'Common space'),
+    )
+    provider = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='provide_service_user',
                                  null=True, blank=True)
-    departure_location = models.CharField(max_length=128)
-    departure_date = models.DateField()
-    arrival_location = models.CharField(max_length=128)
-    arrival_date = models.DateTimeField()
+    requester = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='provider_service_requester',
+                                  blank=True, null=True)
+    provider_from = models.CharField(max_length=128, blank=True, null=True)
+    service_type = models.CharField(max_length=128, choices=TYPE, blank=True, null=True)
+    location = models.CharField(max_length=128, blank=True, null=True)
+    preferences = models.CharField(max_length=128, choices=PREFS, blank=True, null=True)
+    pickup_location = models.CharField(max_length=128, blank=True, null=True)
+    drop_off_location = models.CharField(max_length=128, blank=True, null=True)
+    deadline = models.DateField(blank=True, null=True)
     title = models.CharField(max_length=64)
     text = models.TextField(max_length=640, null=True, blank=True)
     status = models.CharField(choices=STATUS, max_length=64)
@@ -190,8 +205,8 @@ class RequestProvideService(models.Model):
         ('Accepted', 'Accepted'),
         ('Canceled', 'Canceled'),
     )
-    service = models.ForeignKey(ProvideService, on_delete=models.CASCADE)
-    requester = models.ForeignKey('users.User', on_delete=models.CASCADE)
+    requester = models.ForeignKey('users.User', on_delete=models.CASCADE, blank=True, null=True)
+    service = models.ForeignKey(Service, on_delete=models.CASCADE)
     status = models.CharField(choices=STATUS, max_length=64, default='Pending')
     accept = models.BooleanField(default=False)
 
@@ -200,8 +215,8 @@ class RequestProvideService(models.Model):
 
 
 @receiver(post_save, sender=ProvideService)
-def pull_hosting_points(sender, instance, created, **kwargs):
-    if created and instance.status == 'Accepted/in process':
+def pull_service_provide_points(sender, instance, created, **kwargs):
+    if created and instance.status == 'Accepted/in process' and instance.requester:
         points = 20
         user = instance.requester
         user_points = user.points
@@ -211,7 +226,7 @@ def pull_hosting_points(sender, instance, created, **kwargs):
 
 
 @receiver(post_save, sender=ProvideService)
-def pay_hosting_points(sender, instance, created, **kwargs):
+def pay_service_provide_points(sender, instance, created, **kwargs):
     if instance.status == "Successfully done":
         points = 20
         user = instance.provider
@@ -222,19 +237,15 @@ def pay_hosting_points(sender, instance, created, **kwargs):
 
 
 @receiver(post_save, sender=ProvideService)
-def hosting_cancel_points_back(sender, instance, created, **kwargs):
-    if instance.status == 'Canceled':
-        points = 10
-        requester = instance.requester
-        provider = instance.provider
-        requester_points = requester.points
-        provider_points = provider.points
-        requester_points += points
-        provider_points += points
-        requester.points = requester_points
-        provider.points = provider_points
-        provider.save()
-        requester.save()
+def service_provide_cancel_points_back(sender, instance, created, **kwargs):
+    deadline = instance.deadline
+    today = datetime.date.today()
+    timer = int(deadline.day) - int(today.day)
+    if instance.status == 'Canceled' and timer > 2:
+        instance.requester.points += 10
+        instance.provider.points += 10
+    elif instance.status == 'Canceled' and timer < 2:
+        instance.provider.points += 20
 
 
 @receiver(post_save, sender=ProvideService)
