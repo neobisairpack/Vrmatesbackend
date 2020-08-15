@@ -129,10 +129,8 @@ class User(AbstractBaseUser, PermissionsMixin):
             return 0
 
     def canceled_posts_count(self):
-        delivery = service_models.Delivery.objects.filter(requester=self, status='Canceled').count()
-        pickup = service_models.PickUp.objects.filter(requester=self, status='Canceled').count()
-        hosting = service_models.Hosting.objects.filter(requester=self, status='Canceled').count()
-        return delivery + pickup + hosting
+        service = service_models.Service.objects.filter(requester=self, status='Canceled').count()
+        return service
 
     avg_rating.short_description = 'Average rating'
     rating_count.short_description = 'Rating count'

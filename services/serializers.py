@@ -1,27 +1,32 @@
 from rest_framework import serializers
 
 from .models import *
+from .mixins import ExtraFieldsMixin
 from users.serializers import UserSerializer
 
 
-class DeliveryImagesSerializer(serializers.ModelSerializer):
+class ServiceImagesSerializer(serializers.ModelSerializer):
     class Meta:
-        model = DeliveryImage
+        model = ServiceImage
         fields = '__all__'
 
 
-class DeliverySerializer(serializers.ModelSerializer):
+class ServiceSerializer(serializers.ModelSerializer, ExtraFieldsMixin):
     requester = serializers.HiddenField(default=serializers.CurrentUserDefault())
-    images = DeliveryImagesSerializer(source='image_set', many=True, required=False, read_only=True)
+    images = ServiceImagesSerializer(many=True, required=False)
 
     class Meta:
-        model = Delivery
+        model = Service
         fields = '__all__'
+        extra_fields = ['images']
 
     def create(self, validated_data):
         images_data = self.context.get('view').request.FILES
-        post = Delivery.objects.create(
-            requester=self.requester,
+        post = Service.objects.create(
+            requester_from=validated_data.get('requester_from'),
+            service_type=validated_data.get('service_type'),
+            location=validated_data.get('location'),
+            preferences=validated_data.get('preferences'),
             pickup_location=validated_data.get('pickup_location'),
             drop_off_location=validated_data.get('pickup_location'),
             deadline=validated_data.get('deadline'),
@@ -30,113 +35,33 @@ class DeliverySerializer(serializers.ModelSerializer):
             text=validated_data.get('text'),
         )
         for image_data in images_data.values():
-            DeliveryImage.objects.create(post=post, image=image_data)
+            ServiceImage.objects.create(post=post, image=image_data)
         return post
 
 
-class DeliveryReadableSerializer(serializers.ModelSerializer):
+class ServiceReadableSerializer(serializers.ModelSerializer):
     requester = UserSerializer()
     provider = UserSerializer()
 
     class Meta:
-        model = Delivery
+        model = Service
         fields = '__all__'
 
 
-class RequestDeliverySerializer(serializers.ModelSerializer):
+class RequestServiceSerializer(serializers.ModelSerializer):
     requester = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
-        model = RequestDelivery
+        model = RequestService
         fields = '__all__'
 
 
-class RequestDeliveryReadableSerializer(serializers.ModelSerializer):
-    service = DeliveryReadableSerializer()
+class RequestServiceReadableSerializer(serializers.ModelSerializer):
+    service = ServiceReadableSerializer()
     requester = UserSerializer()
 
     class Meta:
-        model = RequestDelivery
-        fields = '__all__'
-
-
-class PickUpSerializer(serializers.ModelSerializer):
-    requester = serializers.HiddenField(default=serializers.CurrentUserDefault())
-
-    class Meta:
-        model = PickUp
-        fields = '__all__'
-
-
-class PickUpReadableSerializer(serializers.ModelSerializer):
-    requester = UserSerializer()
-    provider = UserSerializer()
-
-    class Meta:
-        model = PickUp
-        fields = '__all__'
-
-
-class PickUpImagesSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = PickUpImage
-        fields = '__all__'
-
-
-class RequestPickUpSerializer(serializers.ModelSerializer):
-    requester = serializers.HiddenField(default=serializers.CurrentUserDefault())
-
-    class Meta:
-        model = RequestPickUp
-        fields = '__all__'
-
-
-class RequestPickUpReadableSerializer(serializers.ModelSerializer):
-    service = PickUpReadableSerializer()
-    requester = UserSerializer()
-
-    class Meta:
-        model = RequestPickUp
-        fields = '__all__'
-
-
-class HostingSerializer(serializers.ModelSerializer):
-    requester = serializers.HiddenField(default=serializers.CurrentUserDefault())
-
-    class Meta:
-        model = Hosting
-        fields = '__all__'
-
-
-class HostingReadableSerializer(serializers.ModelSerializer):
-    requester = UserSerializer()
-    provider = UserSerializer()
-
-    class Meta:
-        model = Hosting
-        fields = '__all__'
-
-
-class HostingImagesSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = HostingImage
-        fields = '__all__'
-
-
-class RequestHostingSerializer(serializers.ModelSerializer):
-    requester = serializers.HiddenField(default=serializers.CurrentUserDefault())
-
-    class Meta:
-        model = RequestHosting
-        fields = '__all__'
-
-
-class RequestHostingReadableSerializer(serializers.ModelSerializer):
-    service = HostingReadableSerializer()
-    requester = UserSerializer()
-
-    class Meta:
-        model = RequestHosting
+        model = RequestService
         fields = '__all__'
 
 
@@ -152,76 +77,26 @@ class SupportReadableSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class ProvideDeliverySerializer(serializers.ModelSerializer):
+class ProvideServiceSerializer(serializers.ModelSerializer):
     provider = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
-        model = ProvideDelivery
+        model = ProvideService
         fields = '__all__'
 
 
-class ProvideDeliveryReadableSerializer(serializers.ModelSerializer):
+class ProvideServiceReadableSerializer(serializers.ModelSerializer):
     requester = UserSerializer()
     provider = UserSerializer()
 
     class Meta:
-        model = ProvideDelivery
+        model = ProvideService
         fields = '__all__'
 
 
-class RequestProvideDeliverySerializer(serializers.ModelSerializer):
+class RequestProvideServiceSerializer(serializers.ModelSerializer):
     requester = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
-        model = RequestProvideDelivery
-        fields = '__all__'
-
-
-class ProvidePickUpSerializer(serializers.ModelSerializer):
-    provider = serializers.HiddenField(default=serializers.CurrentUserDefault())
-
-    class Meta:
-        model = ProvidePickUp
-        fields = '__all__'
-
-
-class ProvidePickUpReadableSerializer(serializers.ModelSerializer):
-    requester = UserSerializer()
-    provider = UserSerializer()
-
-    class Meta:
-        model = ProvidePickUp
-        fields = '__all__'
-
-
-class RequestProvidePickUpSerializer(serializers.ModelSerializer):
-    requester = serializers.HiddenField(default=serializers.CurrentUserDefault())
-
-    class Meta:
-        model = RequestProvidePickUp
-        fields = '__all__'
-
-
-class ProvideHostingSerializer(serializers.ModelSerializer):
-    provider = serializers.HiddenField(default=serializers.CurrentUserDefault())
-
-    class Meta:
-        model = ProvideHosting
-        fields = '__all__'
-
-
-class ProvideHostingReadableSerializer(serializers.ModelSerializer):
-    requester = UserSerializer()
-    provider = UserSerializer()
-
-    class Meta:
-        model = ProvideHosting
-        fields = '__all__'
-
-
-class RequestProvideHostingSerializer(serializers.ModelSerializer):
-    requester = serializers.HiddenField(default=serializers.CurrentUserDefault())
-
-    class Meta:
-        model = RequestProvideHosting
+        model = RequestProvideService
         fields = '__all__'
