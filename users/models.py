@@ -160,5 +160,5 @@ class Rating(models.Model):
                                  on_delete=models.CASCADE, related_name='receive_rate')
     rating = models.FloatField(validators=(MinValueValidator(1.0), MaxValueValidator(5.0)))
     text = models.TextField(max_length=512)
-    image = models.ImageField(upload_to='ratings')
+    image = models.ImageField(upload_to='ratings', blank=True, null=True)
     date = models.DateField(auto_now_add=True)
