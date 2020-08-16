@@ -6,11 +6,11 @@ from users.views import RatingViewSet
 
 
 router = routers.DefaultRouter()
-router.register('service', ServiceViewSet)
-router.register('service-images', ServiceImageViewSet)
-router.register('request-service', RequestServiceViewSet)
-router.register('provide-service', ProvideServiceViewSet)
-router.register('request-provide-service', RequestProvideServiceViewSet)
+router.register('services', ServiceViewSet)
+router.register('services-images', ServiceImageViewSet)
+router.register('request-services', RequestServiceViewSet)
+router.register('provide-services', ProvideServiceViewSet)
+router.register('request-provide-services', RequestProvideServiceViewSet)
 router.register('rating', RatingViewSet)
 router.register('support', SupportViewSet)
 

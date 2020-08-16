@@ -1,4 +1,4 @@
-from django.http import Http404
+from django.http import Http404, HttpResponseForbidden
 from rest_framework import viewsets, status
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
@@ -24,6 +24,9 @@ class ServiceViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
 
     def delete(self, request):
         pk = request.data.get('id', None)
@@ -130,7 +133,7 @@ class SupportViewSet(viewsets.ModelViewSet):
 
 
 class ProvideServiceViewSet(viewsets.ModelViewSet):
-    permission_classes = (IsAuthenticated, )
+    # permission_classes = (IsAuthenticated, )
     queryset = ProvideService.objects.filter(is_checked=True)
     serializer_class = ProvideServiceSerializer
 

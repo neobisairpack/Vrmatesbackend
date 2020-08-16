@@ -113,21 +113,21 @@ def pay_service_points(sender, instance, created, **kwargs):
 @receiver(post_save, sender=Service)
 def service_cancel_points_back(sender, instance, created, **kwargs):
     deadline = instance.deadline
-    today = datetime.date.today()
-    timer = int(deadline.day) - int(today.day)
-    if instance.status == 'Canceled' and timer > 2:
+    today = datetime.datetime.now().date()
+    timer = deadline - today
+    if instance.status == 'Canceled' and timer.days > 2:
         instance.requester.points += 10
         instance.provider.points += 10
-    elif instance.status == 'Canceled' and timer < 2:
+    elif instance.status == 'Canceled' and timer.days < 2:
         instance.provider.points += 20
 
 
 @receiver(post_save, sender=Service)
 def service_expired(sender, instance, created, **kwargs):
     deadline = instance.deadline
-    today = datetime.date.today()
-    timer = int(deadline.day) - int(today.day)
-    if timer < 0:
+    today = datetime.datetime.now().date()
+    timer = deadline - today
+    if timer.days < 0:
         service = instance
         service.status = 'Expired'
         service.save()
@@ -189,6 +189,7 @@ class ProvideService(models.Model):
     preferences = models.CharField(max_length=128, choices=PREFS, blank=True, null=True)
     pickup_location = models.CharField(max_length=128, blank=True, null=True)
     drop_off_location = models.CharField(max_length=128, blank=True, null=True)
+    arrive_date = models.DateTimeField(blank=True, null=True)
     deadline = models.DateField(blank=True, null=True)
     title = models.CharField(max_length=64, blank=True, null=True)
     text = models.TextField(max_length=640, null=True, blank=True)
@@ -251,21 +252,21 @@ def pay_service_provide_points(sender, instance, created, **kwargs):
 @receiver(post_save, sender=ProvideService)
 def service_provide_cancel_points_back(sender, instance, created, **kwargs):
     deadline = instance.deadline
-    today = datetime.date.today()
-    timer = int(deadline.day) - int(today.day)
-    if instance.status == 'Canceled' and timer > 2:
+    today = datetime.datetime.now().date()
+    timer = deadline - today
+    if instance.status == 'Canceled' and timer.days > 2:
         instance.requester.points += 10
         instance.provider.points += 10
-    elif instance.status == 'Canceled' and timer < 2:
+    elif instance.status == 'Canceled' and timer.days < 2:
         instance.provider.points += 20
 
 
 @receiver(post_save, sender=ProvideService)
 def service_expired(sender, instance, created, **kwargs):
     deadline = instance.deadline
-    today = datetime.date.today()
-    timer = int(deadline.day) - int(today.day)
-    if timer < 0:
+    today = datetime.datetime.now().date()
+    timer = deadline - today
+    if timer.days < 0:
         service = instance
         service.status = 'Expired'
         service.save()
