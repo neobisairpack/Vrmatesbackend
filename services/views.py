@@ -133,7 +133,7 @@ class SupportViewSet(viewsets.ModelViewSet):
 
 
 class ProvideServiceViewSet(viewsets.ModelViewSet):
-    # permission_classes = (IsAuthenticated, )
+    permission_classes = (IsAuthenticated, )
     queryset = ProvideService.objects.filter(is_checked=True)
     serializer_class = ProvideServiceSerializer
 
@@ -147,6 +147,9 @@ class ProvideServiceViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
 
     def delete(self, request):
         pk = request.data.get('id', None)
