@@ -35,6 +35,7 @@ class Service(models.Model):
     preferences = models.CharField(max_length=128, choices=PREFS, blank=True, null=True)
     pickup_location = models.CharField(max_length=128, blank=True, null=True)
     drop_off_location = models.CharField(max_length=128, blank=True, null=True)
+    arrive_date = models.DateTimeField(blank=True, null=True)
     deadline = models.DateField(blank=True, null=True)
     status = models.CharField(choices=STATUS, max_length=64, default='Created, not accepted',
                               blank=True, null=True)
