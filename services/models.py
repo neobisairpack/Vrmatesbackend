@@ -25,9 +25,8 @@ class Service(models.Model):
         ('Living room', 'Living room'),
         ('Common space', 'Common space'),
     )
-    requester = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='service_requester',
-                                  blank=True, null=True)
-    provider = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='service_provider',
+    requester = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='requester')
+    provider = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='provider',
                                  blank=True, null=True)
     requester_from = models.CharField(max_length=128, blank=True, null=True)
     service_type = models.CharField(max_length=128, choices=TYPE, blank=True, null=True)
@@ -48,7 +47,9 @@ class Service(models.Model):
         return str(self.title)
 
     def save(self, *args, **kwargs):
-        if self.requester and self.requester.points < 20:
+        if not self.requester:
+            return "Error, login requires"
+        elif self.requester and self.requester.points < 20:
             if self.is_checked:
                 super(Service, self).save(*args, **kwargs)
             return "Not enough points"

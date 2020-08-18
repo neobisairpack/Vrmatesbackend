@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from .models import *
 from .mixins import ExtraFieldsMixin
+from users.models import User
 from users.serializers import UserSerializer
 
 
@@ -25,6 +26,7 @@ class ServiceSerializer(serializers.ModelSerializer, ExtraFieldsMixin):
     def create(self, validated_data):
         images_data = self.context.get('view').request.FILES
         post = Service.objects.create(
+            requester=validated_data.get('requester'),
             requester_from=validated_data.get('requester_from'),
             service_type=validated_data.get('service_type'),
             location=validated_data.get('location'),
