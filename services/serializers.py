@@ -32,7 +32,7 @@ class ServiceSerializer(serializers.ModelSerializer, ExtraFieldsMixin):
             location=validated_data.get('location'),
             preferences=validated_data.get('preferences'),
             pickup_location=validated_data.get('pickup_location'),
-            drop_off_location=validated_data.get('pickup_location'),
+            drop_off_location=validated_data.get('drop_off_location'),
             deadline=validated_data.get('deadline'),
             status=validated_data.get('status'),
             title=validated_data.get('title'),
