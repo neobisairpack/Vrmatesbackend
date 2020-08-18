@@ -45,7 +45,7 @@ class Service(models.Model):
     is_checked = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.title
+        return str(self.title)
 
     def save(self, *args, **kwargs):
         if self.requester and self.requester.points < 20:

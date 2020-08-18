@@ -17,7 +17,9 @@ class ServiceSerializer(serializers.ModelSerializer, ExtraFieldsMixin):
 
     class Meta:
         model = Service
-        fields = '__all__'
+        fields = ['requester', 'requester_from', 'service_type', 'location', 'preferences',
+                  'pickup_location', 'drop_off_location', 'arrive_date', 'deadline',
+                  'status', 'title', 'text', 'is_checked', 'provider', 'images']
         extra_fields = ['images']
 
     def create(self, validated_data):

@@ -10,7 +10,7 @@ from .serializers import *
 
 
 class ServiceViewSet(viewsets.ModelViewSet):
-    permission_classes = (IsAuthenticated, )
+    # permission_classes = (IsAuthenticated, )
     queryset = Service.objects.filter(is_checked=True)
     serializer_class = ServiceSerializer
 
