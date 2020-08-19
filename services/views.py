@@ -88,6 +88,9 @@ class RequestServiceViewSet(viewsets.ModelViewSet):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
     def delete(self, request):
         pk = request.data.get('id', None)
         if pk is None:
@@ -162,6 +165,36 @@ class ProvideServiceViewSet(viewsets.ModelViewSet):
             raise Http404
         else:
             service.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class ProvideServiceImageViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsAuthenticated, )
+    queryset = ProvideServiceImage.objects.all()
+    serializer_class = ProvideServiceImagesSerializer
+
+    def get(self):
+        image = self.queryset.all()
+        serializer = self.serializer_class(image, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def delete(self, request):
+        pk = request.data.get('id', None)
+        if pk is None:
+            raise ParseError('Service id is required.')
+
+        try:
+            image = self.queryset.get(id=pk)
+        except ProvideServiceImage.DoesNotExist:
+            raise Http404
+        else:
+            image.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
 
 

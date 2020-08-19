@@ -35,7 +35,7 @@ class Service(models.Model):
     pickup_location = models.CharField(max_length=128, blank=True, null=True)
     drop_off_location = models.CharField(max_length=128, blank=True, null=True)
     arrive_date = models.DateTimeField(blank=True, null=True)
-    deadline = models.DateField(blank=True, null=True)
+    deadline = models.DateField()
     status = models.CharField(choices=STATUS, max_length=64, default='Created, not accepted',
                               blank=True, null=True)
     title = models.CharField(max_length=128, blank=True, null=True)
@@ -192,7 +192,7 @@ class ProvideService(models.Model):
     pickup_location = models.CharField(max_length=128, blank=True, null=True)
     drop_off_location = models.CharField(max_length=128, blank=True, null=True)
     arrive_date = models.DateTimeField(blank=True, null=True)
-    deadline = models.DateField(blank=True, null=True)
+    deadline = models.DateField()
     title = models.CharField(max_length=64, blank=True, null=True)
     text = models.TextField(max_length=640, null=True, blank=True)
     status = models.CharField(choices=STATUS, max_length=64, blank=True, null=True, default='Created, not accepted')
@@ -201,6 +201,15 @@ class ProvideService(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class ProvideServiceImage(models.Model):
+    post = models.ForeignKey(ProvideService, default=None, on_delete=models.CASCADE,
+                             blank=True, null=True, related_name='images')
+    image = models.ImageField(upload_to='provide_services_images')
+
+    def __str__(self):
+        return str(self.post)
 
 
 class RequestProvideService(models.Model):
@@ -219,7 +228,7 @@ class RequestProvideService(models.Model):
 
 
 @receiver(post_save, sender=RequestProvideService)
-def service_status(sender, instance, created, **kwargs):
+def provide_service_status(sender, instance, created, **kwargs):
     if instance.status == 'Accepted':
         status = 'Accepted/in process'
         requester = instance.requester
