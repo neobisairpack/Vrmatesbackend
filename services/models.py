@@ -113,21 +113,32 @@ def pay_service_points(sender, instance, created, **kwargs):
 
 
 @receiver(post_save, sender=Service)
-def service_cancel_points_back(sender, instance, created, **kwargs):
+def service_cancel_points(sender, instance, created, **kwargs):
     deadline = instance.deadline
     today = datetime.datetime.now().date()
     timer = deadline - today
+
+    if instance.status == 'Canceled' and instance.provider is None:
+        instance.requester.points += 20
+        instance.requester.save()
+
     if instance.status == 'Canceled' and timer.days > 2:
-        if instance.provider:
+        if instance.provider is not None:
             instance.requester.points += 10
             instance.provider.points += 10
-        else:
+            instance.requester.save()
+            instance.provider.save()
+        if instance.provider is None:
             instance.requester.points += 20
-    elif instance.status == 'Canceled' and timer.days < 2:
-        if instance.provider:
+            instance.requester.save()
+
+    if instance.status == 'Canceled' and timer.days < 2:
+        if instance.provider is not None:
             instance.provider.points += 20
-        else:
+            instance.provider.save()
+        if instance.provider is None:
             instance.requester.points += 20
+            instance.requester.save()
 
 
 @receiver(post_save, sender=Service)
@@ -143,19 +154,33 @@ def service_expired(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=Service)
 def delivery_cancel_notification(sender, instance, created, **kwargs):
-    if instance.status == 'Canceled' and instance.provider:
-        mail_subject = 'Status changed | Vrmates team'
-        message = render_to_string('services/service_canceled.html', {
-            'user': instance.requester.first_name,
-            'provider': instance.provider.first_name,
-            'title': instance.title,
-            'status': instance.status
-        })
-        to_email = [instance.requester.email, instance.provider.email]
-        email = EmailMessage(
-            mail_subject, message, to=[to_email]
-        )
-        email.send()
+    if instance.status == 'Canceled':
+        if instance.requester is not None:
+            mail_subject = 'Status changed | Vrmates team'
+            message = render_to_string('services/service_canceled.html', {
+                'user': instance.requester.first_name,
+                'provider': instance.provider.first_name,
+                'title': instance.title,
+                'status': instance.status
+            })
+            to_email = instance.requester.email
+            email = EmailMessage(
+                mail_subject, message, to=[to_email]
+            )
+            email.send()
+        if instance.provider is not None:
+            mail_subject = 'Status changed | Vrmates team'
+            message = render_to_string('services/service_canceled.html', {
+                'user': instance.requester.first_name,
+                'provider': instance.provider.first_name,
+                'title': instance.title,
+                'status': instance.status
+            })
+            to_email = instance.provider.email
+            email = EmailMessage(
+                mail_subject, message, to=[to_email]
+            )
+            email.send()
 
 
 class Support(models.Model):
@@ -267,21 +292,32 @@ def pay_service_provide_points(sender, instance, created, **kwargs):
 
 
 @receiver(post_save, sender=ProvideService)
-def service_provide_cancel_points_back(sender, instance, created, **kwargs):
+def service_cancel_points(sender, instance, created, **kwargs):
     deadline = instance.deadline
     today = datetime.datetime.now().date()
     timer = deadline - today
+
+    if instance.status == 'Canceled' and instance.provider is None:
+        instance.requester.points += 20
+        instance.requester.save()
+
     if instance.status == 'Canceled' and timer.days > 2:
-        if instance.requester:
-            instance.requester.points += 10
+        if instance.reqeuster is not None:
             instance.provider.points += 10
-        else:
-            instance.requester.points += 20
-    elif instance.status == 'Canceled' and timer.days < 2:
-        if instance.requester:
+            instance.requester.points += 10
+            instance.provider.save()
+            instance.requester.save()
+        if instance.requester is None:
             instance.provider.points += 20
-        else:
-            instance.requester.points += 20
+            instance.provider.save()
+
+    if instance.status == 'Canceled' and timer.days < 2:
+        if instance.reqeuster is not None:
+            instance.reqeuster.points += 20
+            instance.reqeuster.save()
+        if instance.reqeuster is None:
+            instance.provider.points += 20
+            instance.provider.save()
 
 
 @receiver(post_save, sender=ProvideService)
