@@ -143,7 +143,7 @@ def service_expired(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=Service)
 def delivery_cancel_notification(sender, instance, created, **kwargs):
-    if instance.status == 'Canceled':
+    if instance.status == 'Canceled' and instance.provider:
         mail_subject = 'Status changed | Vrmates team'
         message = render_to_string('services/service_canceled.html', {
             'user': instance.requester.first_name,
@@ -272,10 +272,16 @@ def service_provide_cancel_points_back(sender, instance, created, **kwargs):
     today = datetime.datetime.now().date()
     timer = deadline - today
     if instance.status == 'Canceled' and timer.days > 2:
-        instance.requester.points += 10
-        instance.provider.points += 10
+        if instance.requester:
+            instance.requester.points += 10
+            instance.provider.points += 10
+        else:
+            instance.requester.points += 20
     elif instance.status == 'Canceled' and timer.days < 2:
-        instance.provider.points += 20
+        if instance.requester:
+            instance.provider.points += 20
+        else:
+            instance.requester.points += 20
 
 
 @receiver(post_save, sender=ProvideService)
@@ -291,7 +297,7 @@ def service_expired(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=ProvideService)
 def hosting_cancel_notification(sender, instance, created, **kwargs):
-    if instance.status == 'Canceled':
+    if instance.status == 'Canceled' and instance.requester:
         mail_subject = 'Status changed | Vrmates team'
         message = render_to_string('services/service_canceled.html', {
             'user': instance.requester.first_name,
