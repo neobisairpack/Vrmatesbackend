@@ -118,10 +118,16 @@ def service_cancel_points_back(sender, instance, created, **kwargs):
     today = datetime.datetime.now().date()
     timer = deadline - today
     if instance.status == 'Canceled' and timer.days > 2:
-        instance.requester.points += 10
-        instance.provider.points += 10
+        if instance.provider:
+            instance.requester.points += 10
+            instance.provider.points += 10
+        else:
+            instance.requester.points += 20
     elif instance.status == 'Canceled' and timer.days < 2:
-        instance.provider.points += 20
+        if instance.provider:
+            instance.provider.points += 20
+        else:
+            instance.requester.points += 20
 
 
 @receiver(post_save, sender=Service)
