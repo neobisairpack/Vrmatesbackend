@@ -159,7 +159,6 @@ def delivery_cancel_notification(sender, instance, created, **kwargs):
             mail_subject = 'Status changed | Vrmates team'
             message = render_to_string('services/service_canceled.html', {
                 'user': instance.requester.first_name,
-                'provider': instance.provider.first_name,
                 'title': instance.title,
                 'status': instance.status
             })
@@ -172,7 +171,6 @@ def delivery_cancel_notification(sender, instance, created, **kwargs):
             mail_subject = 'Status changed | Vrmates team'
             message = render_to_string('services/service_canceled.html', {
                 'user': instance.requester.first_name,
-                'provider': instance.provider.first_name,
                 'title': instance.title,
                 'status': instance.status
             })
