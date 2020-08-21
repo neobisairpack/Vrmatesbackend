@@ -41,10 +41,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # apps
-    'users.apps.UsersConfig',
-    'services.apps.ServicesConfig',
-
     # rest-framework
     'rest_framework',
     'rest_framework.authtoken',
@@ -57,6 +53,10 @@ INSTALLED_APPS = [
 
     # django filters
     'django_filters',
+
+    # apps
+    'users.apps.UsersConfig',
+    'services.apps.ServicesConfig',
 
     # cors
     'corsheaders',
@@ -72,6 +72,10 @@ REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'users.exceptions.user_exception_handler',
     'NON_FIELD_ERRORS_KEY': 'error',
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
+}
+
+DJANGO_REST_PASSWORDRESET_TOKEN_CONFIG = {
+    "CLASS": "django_rest_passwordreset.tokens.RandomStringTokenGenerator"
 }
 
 MIDDLEWARE = [
