@@ -300,7 +300,7 @@ def service_cancel_points(sender, instance, created, **kwargs):
         instance.requester.save()
 
     if instance.status == 'Canceled' and timer.days > 2:
-        if instance.reqeuster is not None:
+        if instance.requester is not None:
             instance.provider.points += 10
             instance.requester.points += 10
             instance.provider.save()
@@ -310,10 +310,10 @@ def service_cancel_points(sender, instance, created, **kwargs):
             instance.provider.save()
 
     if instance.status == 'Canceled' and timer.days < 2:
-        if instance.reqeuster is not None:
-            instance.reqeuster.points += 20
-            instance.reqeuster.save()
-        if instance.reqeuster is None:
+        if instance.requester is not None:
+            instance.requester.points += 20
+            instance.requester.save()
+        if instance.requester is None:
             instance.provider.points += 20
             instance.provider.save()
 

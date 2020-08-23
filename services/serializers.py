@@ -102,6 +102,7 @@ class ProvideServiceSerializer(serializers.ModelSerializer):
         images_data = self.context.get('view').request.FILES
         post = ProvideService.objects.create(
             provider=validated_data.get('provider'),
+            requester=validated_data.get('requester'),
             provider_from=validated_data.get('provider_from'),
             service_type=validated_data.get('service_type'),
             location=validated_data.get('location'),
