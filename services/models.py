@@ -153,7 +153,7 @@ def service_expired(sender, instance, created, **kwargs):
 
 
 @receiver(post_save, sender=Service)
-def delivery_cancel_notification(sender, instance, created, **kwargs):
+def service_cancel_notification(sender, instance, created, **kwargs):
     if instance.status == 'Canceled':
         if instance.requester is not None:
             mail_subject = 'Status changed | Vrmates team'
@@ -330,17 +330,29 @@ def service_expired(sender, instance, created, **kwargs):
 
 
 @receiver(post_save, sender=ProvideService)
-def hosting_cancel_notification(sender, instance, created, **kwargs):
-    if instance.status == 'Canceled' and instance.requester:
-        mail_subject = 'Status changed | Vrmates team'
-        message = render_to_string('services/service_canceled.html', {
-            'user': instance.requester.first_name,
-            'provider': instance.provider.first_name,
-            'title': instance.title,
-            'status': instance.status
-        })
-        to_email = [instance.requester.email, instance.provider.email]
-        email = EmailMessage(
-            mail_subject, message, to=[to_email]
-        )
-        email.send()
+def provide_service_cancel_notification(sender, instance, created, **kwargs):
+    if instance.status == 'Canceled':
+        if instance.requester is not None:
+            mail_subject = 'Status changed | Vrmates team'
+            message = render_to_string('services/service_canceled.html', {
+                'user': instance.requester.first_name,
+                'title': instance.title,
+                'status': instance.status
+            })
+            to_email = instance.requester.email
+            email = EmailMessage(
+                mail_subject, message, to=[to_email]
+            )
+            email.send()
+        if instance.provider is not None:
+            mail_subject = 'Status changed | Vrmates team'
+            message = render_to_string('services/service_canceled.html', {
+                'user': instance.requester.first_name,
+                'title': instance.title,
+                'status': instance.status
+            })
+            to_email = instance.provider.email
+            email = EmailMessage(
+                mail_subject, message, to=[to_email]
+            )
+            email.send()
