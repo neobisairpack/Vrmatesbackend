@@ -129,6 +129,8 @@ class LoginSerializer(serializers.Serializer):
 
 
 class RatingSerializer(serializers.ModelSerializer):
+    requester = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
     class Meta:
         model = Rating
         fields = '__all__'
