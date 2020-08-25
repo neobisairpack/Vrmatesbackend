@@ -28,7 +28,11 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']  # 167.172.178.135
+ALLOWED_HOSTS = [
+    '167.172.178.135',
+    'vrmates.co',
+    'www.vrmates.co',
+]  # 167.172.178.135
 
 # Application definition
 
@@ -79,6 +83,7 @@ DJANGO_REST_PASSWORDRESET_TOKEN_CONFIG = {
 }
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -86,17 +91,16 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
 ]
 
-APPEND_SLASH = False
+# APPEND_SLASH = False
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
-CORS_ORIGIN_WHITELIST = (
+CORS_ORIGIN_WHITELIST = [
     'http://localhost:3000',
     'http://localhost:3001',
     'http://localhost:8000',
-)
+]
 
 ROOT_URLCONF = 'airpack.urls'
 
