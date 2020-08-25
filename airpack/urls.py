@@ -22,7 +22,6 @@ from django.urls import path, include
 urlpatterns = [
     url(r'^', include('django.contrib.auth.urls')),
     url(r'^jet/', include('jet.urls', 'jet')),
-    url(r'^jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),
     path('admin/', admin.site.urls),
     path('', include('users.urls')),
     path('api/', include('services.urls')),
