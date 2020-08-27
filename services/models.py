@@ -229,7 +229,7 @@ class ProvideService(models.Model):
     is_checked = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.title
+        return str(self.title)
 
 
 class ProvideServiceImage(models.Model):
@@ -253,7 +253,7 @@ class RequestProvideService(models.Model):
     accept = models.BooleanField(default=False)
 
     def __str__(self):
-        return '%s' % self.service
+        return str(self.service)
 
 
 @receiver(post_save, sender=RequestProvideService)
