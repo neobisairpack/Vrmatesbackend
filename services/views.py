@@ -58,6 +58,9 @@ class ServiceImageViewSet(viewsets.ModelViewSet):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
     def delete(self, request):
         pk = request.data.get('id', None)
         if pk is None:
@@ -184,6 +187,9 @@ class ProvideServiceImageViewSet(viewsets.ModelViewSet):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
     def delete(self, request):
         pk = request.data.get('id', None)
         if pk is None:
@@ -214,6 +220,9 @@ class RequestProvideServiceViewSet(viewsets.ModelViewSet):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
     def delete(self, request):
         pk = request.data.get('id', None)
         if pk is None:
@@ -232,7 +241,7 @@ class ServiceFilterListAPIView(ListAPIView):
     queryset = Service.objects.filter(is_checked=True)
     serializer_class = ServiceReadableSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['status', 'created', 'service_type']
+    filterset_fields = ['status', 'deadline', 'service_type']
 
 
 class SupportFilterListAPIView(ListAPIView):
