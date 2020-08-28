@@ -42,6 +42,11 @@ class ServiceSerializer(serializers.ModelSerializer, ExtraFieldsMixin):
             ServiceImage.objects.create(post=post, image=image_data)
         return post
 
+    def update(self, instance, validated_data):
+        instance.images = validated_data.get('images', instance.images)
+        instance.save()
+        return instance
+
 
 class ServiceReadableSerializer(serializers.ModelSerializer):
     requester = UserSerializer()
@@ -117,6 +122,11 @@ class ProvideServiceSerializer(serializers.ModelSerializer):
         for image_data in images_data.values():
             ProvideServiceImage.objects.create(post=post, image=image_data)
         return post
+
+    def update(self, instance, validated_data):
+        instance.images = validated_data.get('images', instance.images)
+        instance.save()
+        return instance
 
 
 class ProvideServiceReadableSerializer(serializers.ModelSerializer):
