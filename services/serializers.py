@@ -2,7 +2,6 @@ from rest_framework import serializers
 
 from .models import *
 from .mixins import ExtraFieldsMixin
-from users.models import User
 from users.serializers import UserSerializer
 
 
@@ -18,7 +17,7 @@ class ServiceSerializer(serializers.ModelSerializer, ExtraFieldsMixin):
 
     class Meta:
         model = Service
-        fields = ['requester', 'requester_from', 'service_type', 'location', 'preferences',
+        fields = ['requester', 'requester_from', 'service_type', 'country', 'preferences',
                   'pickup_location', 'drop_off_location', 'arrive_date', 'deadline',
                   'status', 'title', 'text', 'is_checked', 'provider', 'images']
         extra_fields = ['images']
@@ -29,7 +28,7 @@ class ServiceSerializer(serializers.ModelSerializer, ExtraFieldsMixin):
             requester=validated_data.get('requester'),
             requester_from=validated_data.get('requester_from'),
             service_type=validated_data.get('service_type'),
-            location=validated_data.get('location'),
+            country=validated_data.get('country'),
             preferences=validated_data.get('preferences'),
             pickup_location=validated_data.get('pickup_location'),
             drop_off_location=validated_data.get('drop_off_location'),
@@ -98,7 +97,7 @@ class ProvideServiceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ProvideService
-        fields = ['requester', 'provider_from', 'service_type', 'location', 'preferences',
+        fields = ['requester', 'provider_from', 'service_type', 'country', 'preferences',
                   'pickup_location', 'drop_off_location', 'arrive_date', 'deadline',
                   'status', 'title', 'text', 'is_checked', 'provider', 'images']
         extra_fields = ['images']
@@ -110,7 +109,7 @@ class ProvideServiceSerializer(serializers.ModelSerializer):
             requester=validated_data.get('requester'),
             provider_from=validated_data.get('provider_from'),
             service_type=validated_data.get('service_type'),
-            location=validated_data.get('location'),
+            country=validated_data.get('country'),
             preferences=validated_data.get('preferences'),
             pickup_location=validated_data.get('pickup_location'),
             drop_off_location=validated_data.get('drop_off_location'),
