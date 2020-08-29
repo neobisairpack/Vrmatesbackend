@@ -244,6 +244,13 @@ class ServiceFilterListAPIView(ListAPIView):
     filterset_fields = ['status', 'deadline', 'service_type', 'location']
 
 
+class ProvideServiceFilterListAPIView(ListAPIView):
+    queryset = ProvideService.objects.filter(is_checked=True)
+    serializer_class = ProvideServiceReadableSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['status', 'deadline', 'service_type', 'location']
+
+
 class SupportFilterListAPIView(ListAPIView):
     queryset = Support.objects.all()
     serializer_class = SupportReadableSerializer

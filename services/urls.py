@@ -18,5 +18,6 @@ router.register('support', SupportViewSet)
 urlpatterns = [
     path('', include(router.urls)),
     path('service-filters/', ServiceFilterListAPIView.as_view()),
+    path('provide-filters/', ProvideServiceFilterListAPIView.as_view()),
     path('support-filters/', SupportFilterListAPIView.as_view()),
 ]
