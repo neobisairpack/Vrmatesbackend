@@ -106,10 +106,16 @@ def pull_service_points(sender, instance, created, **kwargs):
 @receiver(post_save, sender=Service)
 def pay_service_points(sender, instance, created, **kwargs):
     if instance.status == "Successfully done":
-        points = 20
-        user = instance.provider
-        user.points += points
-        user.save()
+        if instance.provider is not None:
+            points = 20
+            user = instance.provider
+            user.points += points
+            user.save()
+        if instance.provider is None:
+            points = 20
+            user = instance.requester
+            user.points += points
+            user.save()
 
 
 @receiver(post_save, sender=Service)

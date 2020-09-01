@@ -211,7 +211,7 @@ class RequestProvideServiceViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         service = self.queryset.all()
-        serializer = RequestProvideServiceSerializer(service, many=True)
+        serializer = RequestProvideServiceReadableSerializer(service, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):

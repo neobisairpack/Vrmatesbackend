@@ -143,3 +143,12 @@ class RequestProvideServiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = RequestProvideService
         fields = '__all__'
+
+
+class RequestProvideServiceReadableSerializer(serializers.ModelSerializer):
+    service = ServiceReadableSerializer()
+    requester = UserSerializer()
+
+    class Meta:
+        model = RequestProvideService
+        fields = '__all__'
