@@ -123,8 +123,10 @@ class ProvideServiceSerializer(serializers.ModelSerializer):
         return post
 
     def update(self, instance, validated_data):
-        instance.images = validated_data.get('images', instance.images)
-        instance.save()
+        images_data = validated_data.get('images')
+        images = instance.images
+        images.image = images_data.get('images', images.image)
+        instance.images.set(*images)
         return instance
 
 
