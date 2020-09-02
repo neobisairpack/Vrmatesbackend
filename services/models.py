@@ -88,7 +88,7 @@ def service_status(sender, instance, created, **kwargs):
         service = instance.service
         service.status = status
         service.save()
-    if instance.status == 'Accepted':
+    if not created and instance.status == 'Accepted':
         service = instance.service
         service.provider = instance.requester
         service.save()
@@ -266,12 +266,14 @@ class RequestProvideService(models.Model):
 
 @receiver(post_save, sender=RequestProvideService)
 def provide_service_status(sender, instance, created, **kwargs):
-    if instance.status == 'Accepted':
+    if created and instance.status == 'Accepted':
         status = 'Accepted/in process'
-        requester = instance.requester
         service = instance.service
-        service.requester = requester
         service.status = status
+        service.save()
+    if not created and instance.status == 'Accepted':
+        service = instance.service
+        service.provider = instance.requester
         service.save()
 
 
