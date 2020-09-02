@@ -41,11 +41,9 @@ class ServiceSerializer(serializers.ModelSerializer, ExtraFieldsMixin):
             ServiceImage.objects.create(post=post, image=image_data)
         return post
 
-    def update(self, instance, validated_data, request):
-        # instance.images = validated_data.get('images', instance.images)
-        # instance.save()
-        images = request.data.get('images')
-        instance.images.set(*images)
+    def update(self, instance, validated_data):
+        instance.images = validated_data.get('images', instance.images)
+        instance.save()
         return instance
 
 
@@ -125,12 +123,8 @@ class ProvideServiceSerializer(serializers.ModelSerializer):
         return post
 
     def update(self, instance, validated_data):
-        # instance.images = validated_data.get('images', instance.images)
-        # instance.save()
-        image_data = validated_data.pop('images')
-        images = instance.images
-        images.image = image_data.get('images', images.image)
-        images.image.set(*images)
+        instance.images = validated_data.get('images', instance.images)
+        instance.save()
         return instance
 
 

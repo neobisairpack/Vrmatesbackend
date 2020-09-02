@@ -86,8 +86,11 @@ def service_status(sender, instance, created, **kwargs):
     if created and instance.status == 'Accepted':
         status = 'Accepted/in process'
         service = instance.service
-        service.provider = instance.requester
         service.status = status
+        service.save()
+    if instance.status == 'Accepted':
+        service = instance.service
+        service.provider = instance.requester
         service.save()
 
 
