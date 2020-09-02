@@ -8,7 +8,7 @@ from users.serializers import UserSerializer
 class ServiceImagesSerializer(serializers.ModelSerializer):
     class Meta:
         model = ServiceImage
-        fields = '__all__'
+        exclude = ('post',)
 
 
 class ServiceSerializer(serializers.ModelSerializer, ExtraFieldsMixin):
@@ -17,7 +17,7 @@ class ServiceSerializer(serializers.ModelSerializer, ExtraFieldsMixin):
 
     class Meta:
         model = Service
-        fields = ['requester', 'requester_from', 'service_type', 'country', 'preferences',
+        fields = ['id', 'requester', 'requester_from', 'service_type', 'country', 'preferences',
                   'pickup_location', 'drop_off_location', 'arrive_date', 'deadline',
                   'status', 'title', 'text', 'is_checked', 'provider', 'images']
         extra_fields = ['images']
@@ -41,7 +41,11 @@ class ServiceSerializer(serializers.ModelSerializer, ExtraFieldsMixin):
             ServiceImage.objects.create(post=post, image=image_data)
         return post
 
+    def update(self, instance, validated_data):
+        validated_data.pop('requester')
+        return super().update(instance, validated_data)
 
+# ок, я еще поищу. что нарою если что в общую группу спрошу попробуй так сначал
 class ServiceReadableSerializer(serializers.ModelSerializer):
     requester = UserSerializer()
     provider = UserSerializer()
