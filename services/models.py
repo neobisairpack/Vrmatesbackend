@@ -80,18 +80,10 @@ class RequestService(models.Model):
     def __str__(self):
         return '%s' % self.service
 
+#
+# @receiver(post_save, sender=RequestService)
+# def service_status(sender, instance, created, **kwargs):
 
-@receiver(post_save, sender=RequestService)
-def service_status(sender, instance, created, **kwargs):
-    if created and instance.status == 'Accepted':
-        status = 'Accepted/in process'
-        service = instance.service
-        service.status = status
-        service.save()
-    if not created and instance.status == 'Accepted':
-        service = instance.service
-        service.provider = instance.requester
-        service.save()
 
 
 @receiver(post_save, sender=Service)
