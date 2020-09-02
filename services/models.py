@@ -85,9 +85,7 @@ class RequestService(models.Model):
 def service_status(sender, instance, created, **kwargs):
     if instance.status == 'Accepted':
         status = 'Accepted/in process'
-        requester = instance.requester
         service = instance.service
-        service.provider = requester
         service.status = status
         service.save()
 
