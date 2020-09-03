@@ -4,7 +4,7 @@ from django.dispatch import receiver
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.db.models.signals import post_save
-from django_currentuser.middleware import get_current_authenticated_user
+# from django_currentuser.middleware import get_current_authenticated_user
 
 
 class Service(models.Model):
@@ -58,10 +58,10 @@ class Service(models.Model):
             super(Service, self).save(*args, **kwargs)
 
 
-@receiver(post_save, sender=Service)
-def get_current_user(sender, instance, created, **kwargs):
-    if created:
-        service = instance.service
+# @receiver(post_save, sender=Service)
+# def get_current_user(sender, instance, created, **kwargs):
+#     if created:
+#         service = instance.service
 
 
 class ServiceImage(models.Model):
