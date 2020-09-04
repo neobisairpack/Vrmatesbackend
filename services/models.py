@@ -4,7 +4,6 @@ from django.dispatch import receiver
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.db.models.signals import post_save
-# from django_currentuser.middleware import get_current_authenticated_user
 
 
 class Service(models.Model):
@@ -26,7 +25,8 @@ class Service(models.Model):
         ('Living room', 'Living room'),
         ('Common space', 'Common space'),
     )
-    requester = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='requester')
+    requester = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='requester',
+                                  blank=True, null=True)
     provider = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='provider',
                                  blank=True, null=True)
     requester_from = models.CharField(max_length=128, blank=True, null=True)
@@ -48,20 +48,12 @@ class Service(models.Model):
         return str(self.title)
 
     def save(self, *args, **kwargs):
-        if not self.requester:
-            return "Error, login requires"
-        elif self.requester and self.requester.points < 20:
+        if self.requester and self.requester.points < 20:
             if self.is_checked:
                 super(Service, self).save(*args, **kwargs)
             return "Not enough points"
         else:
             super(Service, self).save(*args, **kwargs)
-
-
-# @receiver(post_save, sender=Service)
-# def get_current_user(sender, instance, created, **kwargs):
-#     if created:
-#         service = instance.service
 
 
 class ServiceImage(models.Model):
@@ -88,9 +80,14 @@ class RequestService(models.Model):
         return '%s' % self.service
 
 
-# @receiver(post_save, sender=RequestService)
-# def service_status(sender, instance, created, **kwargs):
-
+@receiver(post_save, sender=RequestService)
+def service_status(sender, instance, created, **kwargs):
+    if instance.status == 'Accepted' or instance.accept:
+        status = 'Accepted/in process'
+        service = instance.service
+        service.status = status
+        service.provider = instance.requester
+        service.save()
 
 
 @receiver(post_save, sender=Service)
@@ -265,13 +262,10 @@ class RequestProvideService(models.Model):
 
 @receiver(post_save, sender=RequestProvideService)
 def provide_service_status(sender, instance, created, **kwargs):
-    if created and instance.status == 'Accepted':
+    if instance.status == 'Accepted' or instance.accept:
         status = 'Accepted/in process'
         service = instance.service
         service.status = status
-        service.save()
-    if not created and instance.status == 'Accepted':
-        service = instance.service
         service.provider = instance.requester
         service.save()
 

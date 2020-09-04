@@ -25,9 +25,8 @@ class ServiceViewSet(viewsets.ModelViewSet):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    # def update(self, request, *args, **kwargs):
-    #     print(request.data)
-    #     return super().update(request, *args, **kwargs)
+    def perform_create(self, serializer):
+        serializer.save(requester=self.request.user)
 
     def delete(self, request):
         pk = request.data.get('id', None)
@@ -58,9 +57,6 @@ class ServiceImageViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    # def put(self, request, *args, **kwargs):
-    #     return self.update(request, *args, **kwargs)
 
     def delete(self, request):
         pk = request.data.get('id', None)

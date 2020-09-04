@@ -12,7 +12,6 @@ class ServiceImagesSerializer(serializers.ModelSerializer):
 
 
 class ServiceSerializer(serializers.ModelSerializer, ExtraFieldsMixin):
-    requester = serializers.HiddenField(default=serializers.CurrentUserDefault())
     images = ServiceImagesSerializer(many=True, required=False)
 
     class Meta:
@@ -45,7 +44,7 @@ class ServiceSerializer(serializers.ModelSerializer, ExtraFieldsMixin):
         validated_data.pop('requester')
         return super().update(instance, validated_data)
 
-# ок, я еще поищу. что нарою если что в общую группу спрошу попробуй так сначал
+
 class ServiceReadableSerializer(serializers.ModelSerializer):
     requester = UserSerializer()
     provider = UserSerializer()
