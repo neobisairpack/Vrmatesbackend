@@ -55,8 +55,6 @@ class ServiceReadableSerializer(serializers.ModelSerializer):
 
 
 class RequestServiceSerializer(serializers.ModelSerializer):
-    requester = serializers.HiddenField(default=serializers.CurrentUserDefault())
-
     class Meta:
         model = RequestService
         fields = '__all__'
@@ -90,7 +88,6 @@ class ProvideServiceImagesSerializer(serializers.ModelSerializer):
 
 
 class ProvideServiceSerializer(serializers.ModelSerializer):
-    provider = serializers.HiddenField(default=serializers.CurrentUserDefault())
     images = ProvideServiceImagesSerializer(many=True, required=False)
 
     class Meta:
@@ -136,8 +133,6 @@ class ProvideServiceReadableSerializer(serializers.ModelSerializer):
 
 
 class RequestProvideServiceSerializer(serializers.ModelSerializer):
-    requester = serializers.HiddenField(default=serializers.CurrentUserDefault())
-
     class Meta:
         model = RequestProvideService
         fields = '__all__'
