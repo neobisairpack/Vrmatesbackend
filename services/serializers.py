@@ -40,10 +40,6 @@ class ServiceSerializer(serializers.ModelSerializer, ExtraFieldsMixin):
             ServiceImage.objects.create(post=post, image=image_data)
         return post
 
-    def update(self, instance, validated_data):
-        validated_data.pop('requester')
-        return super().update(instance, validated_data)
-
 
 class ServiceReadableSerializer(serializers.ModelSerializer):
     requester = UserSerializer()
@@ -92,7 +88,7 @@ class ProvideServiceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ProvideService
-        fields = ['requester', 'provider_from', 'service_type', 'country', 'preferences',
+        fields = ['id', 'requester', 'provider_from', 'service_type', 'country', 'preferences',
                   'pickup_location', 'drop_off_location', 'arrive_date', 'deadline',
                   'status', 'title', 'text', 'is_checked', 'provider', 'images']
         extra_fields = ['images']
@@ -116,11 +112,6 @@ class ProvideServiceSerializer(serializers.ModelSerializer):
         for image_data in images_data.values():
             ProvideServiceImage.objects.create(post=post, image=image_data)
         return post
-
-    def update(self, instance, validated_data):
-        instance.images = validated_data.get('images', instance.images)
-        instance.save()
-        return instance
 
 
 class ProvideServiceReadableSerializer(serializers.ModelSerializer):

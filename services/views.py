@@ -28,6 +28,9 @@ class ServiceViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(requester=self.request.user)
 
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
     def delete(self, request):
         pk = request.data.get('id', None)
         if pk is None:
