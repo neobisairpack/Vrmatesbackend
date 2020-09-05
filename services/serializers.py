@@ -8,7 +8,7 @@ from users.serializers import UserSerializer
 class ServiceImagesSerializer(serializers.ModelSerializer):
     class Meta:
         model = ServiceImage
-        exclude = ('post',)
+        fields = '__all__'
 
 
 class ServiceSerializer(serializers.ModelSerializer, ExtraFieldsMixin):
