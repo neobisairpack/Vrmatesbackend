@@ -47,7 +47,7 @@ class RequestProvideServiceAdmin(admin.ModelAdmin):
 
 
 class ProvideServiceImagesAdmin(admin.ModelAdmin):
-    list_display = [field.name for field in RequestProvideService._meta.fields]
+    list_display = [field.name for field in ProvideServiceImage._meta.fields]
 
     class Meta:
         model = ProvideServiceImage
