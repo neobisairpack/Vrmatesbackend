@@ -246,7 +246,10 @@ class ServiceFilterListAPIView(ListAPIView):
         'status', 'deadline', 'service_type',
         'pickup_location', 'drop_off_location'
     ]
-    search_fields = ['country']
+    search_fields = [
+        'country', 'status', 'deadline', 'service_type',
+        'pickup_location', 'drop_off_location'
+    ]
 
 
 class ProvideServiceFilterListAPIView(ListAPIView):
@@ -257,7 +260,10 @@ class ProvideServiceFilterListAPIView(ListAPIView):
         'status', 'deadline', 'service_type',
         'pickup_location', 'drop_off_location'
     ]
-    search_fields = ['country']
+    search_fields = [
+        'country', 'status', 'deadline', 'service_type',
+        'pickup_location', 'drop_off_location'
+    ]
 
 
 class SupportFilterListAPIView(ListAPIView):
