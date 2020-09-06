@@ -1,14 +1,16 @@
 from django.conf.urls import url
 from django.urls import path, include
+from rest_framework import routers
 
 from .views import *
 
 
 app_name = 'users'
 
+
 urlpatterns = [
     path('users/', UserRetrieveUpdateAPIView.as_view(), name='users'),
-    path('users/me/', CurrentUserView.as_view(), name='current_user'),
+    path('users/me/', CurrentUserView.as_view(), name='me'),
     path('users/update/', UserUpdateAPIView.as_view(), name='update_user'),
     path('users/registration/', RegistrationAPIView.as_view(), name='registration'),
     path('users/login/', LoginAPIView.as_view(), name='login'),

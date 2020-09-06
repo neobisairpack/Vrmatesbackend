@@ -97,7 +97,7 @@ class UserRetrieveUpdateAPIView(RetrieveUpdateAPIView):
 
 
 class UserUpdateAPIView(APIView):
-    # permission_classes = (IsAuthenticated, )
+    permission_classes = (IsAuthenticated, )
     serializer_class = UserSerializer
     queryset = User.objects.all()
 
