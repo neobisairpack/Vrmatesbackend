@@ -19,7 +19,6 @@ class ServiceSerializer(serializers.ModelSerializer, ExtraFieldsMixin):
         fields = ['id', 'requester', 'requester_from', 'service_type', 'country', 'preferences',
                   'pickup_location', 'drop_off_location', 'arrive_date', 'deadline',
                   'status', 'title', 'text', 'is_checked', 'provider', 'images']
-        extra_fields = ['images']
 
     def create(self, validated_data):
         images_data = self.context.get('view').request.FILES
@@ -44,6 +43,7 @@ class ServiceSerializer(serializers.ModelSerializer, ExtraFieldsMixin):
 class ServiceReadableSerializer(serializers.ModelSerializer):
     requester = UserSerializer()
     provider = UserSerializer()
+    images = ServiceImagesSerializer(many=True, required=False)
 
     class Meta:
         model = Service
@@ -117,6 +117,7 @@ class ProvideServiceSerializer(serializers.ModelSerializer):
 class ProvideServiceReadableSerializer(serializers.ModelSerializer):
     requester = UserSerializer()
     provider = UserSerializer()
+    images = ProvideServiceImagesSerializer(many=True, required=False)
 
     class Meta:
         model = ProvideService

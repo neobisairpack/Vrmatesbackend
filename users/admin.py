@@ -4,8 +4,8 @@ from .models import User, Rating
 
 
 class MyUserAdmin(admin.ModelAdmin):
-    list_display = ['id', 'first_name', 'last_name', 'username', 'email', 'points',
-                    'avg_rating', 'rating_count', 'avg_rating_last_ten', 'canceled_posts_count', 'is_active']
+    list_display = ['id', 'first_name', 'last_name', 'username', 'email', 'points', 'avg_rating', 'rating_count',
+                    'avg_rating_last_ten', 'canceled_posts', 'created_posts', 'is_active']
     list_display_links = ['id', 'first_name', 'last_name', 'username']
     list_filter = ['is_active']
     search_fields = ['email', 'first_name', 'last_name']

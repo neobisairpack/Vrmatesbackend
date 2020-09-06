@@ -98,6 +98,7 @@ def pull_service_points(sender, instance, created, **kwargs):
         user_points = user.points
         user_points -= points
         user.points = user_points
+        user.created_posts += 1
         user.save()
 
 

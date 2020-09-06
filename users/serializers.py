@@ -21,7 +21,7 @@ class UserSerializer(serializers.ModelSerializer):
             'id', 'first_name', 'last_name', 'age', 'username', 'email', 'birthday',
             'gender', 'phone', 'about_me', 'image', 'address', 'zip_code',
             'country', 'city', 'state', 'points', 'avg_rating', 'rating_count',
-            'avg_rating_last_ten', 'canceled_posts_count', 'password', 'token']
+            'avg_rating_last_ten', 'canceled_posts', 'created_posts', 'password', 'token']
         read_only_fields = ['token', 'password']
 
     def get_age(self, instance):
@@ -65,7 +65,8 @@ class RegistrationSerializer(serializers.ModelSerializer):
         model = User
         fields = [
             'id', 'first_name', 'last_name', 'username', 'email', 'birthday', 'gender', 'phone', 'about_me',
-            'image', 'address', 'zip_code', 'country', 'city', 'state', 'password', 'password2', 'token'
+            'image', 'address', 'zip_code', 'country', 'city', 'state', 'password', 'password2', 'token',
+            'canceled_posts', 'created_posts'
         ]
         extra_kwargs = {
             'password': {'write_only': True}
@@ -86,7 +87,9 @@ class RegistrationSerializer(serializers.ModelSerializer):
             city=self.validated_data['city'],
             state=self.validated_data['state'],
             about_me=self.validated_data['about_me'],
-            image=self.validated_data['image']
+            image=self.validated_data['image'],
+            canceled_posts=self.validated_data['canceled_posts'],
+            created_posts=self.validated_data['created_posts']
         )
         password = self.validated_data['password']
         password2 = self.validated_data['password2']

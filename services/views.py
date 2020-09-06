@@ -1,5 +1,6 @@
-from django.http import Http404, HttpResponseForbidden
+from django.http import Http404
 from rest_framework import viewsets, status
+from rest_framework.filters import SearchFilter
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.exceptions import ParseError
@@ -10,7 +11,7 @@ from .serializers import *
 
 
 class ServiceViewSet(viewsets.ModelViewSet):
-    permission_classes = (IsAuthenticated, )
+    # permission_classes = (IsAuthenticated, )
     queryset = Service.objects.filter(is_checked=True)
     serializer_class = ServiceSerializer
 
@@ -240,23 +241,23 @@ class RequestProvideServiceViewSet(viewsets.ModelViewSet):
 class ServiceFilterListAPIView(ListAPIView):
     queryset = Service.objects.filter(is_checked=True)
     serializer_class = ServiceReadableSerializer
-    filter_backends = [DjangoFilterBackend]
+    filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_fields = [
-        'status', 'deadline',
-        'service_type', 'country',
+        'status', 'deadline', 'service_type',
         'pickup_location', 'drop_off_location'
     ]
+    search_fields = ['country']
 
 
 class ProvideServiceFilterListAPIView(ListAPIView):
     queryset = ProvideService.objects.filter(is_checked=True)
     serializer_class = ProvideServiceReadableSerializer
-    filter_backends = [DjangoFilterBackend]
+    filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_fields = [
-        'status', 'deadline',
-        'service_type', 'country',
+        'status', 'deadline', 'service_type',
         'pickup_location', 'drop_off_location'
     ]
+    search_fields = ['country']
 
 
 class SupportFilterListAPIView(ListAPIView):

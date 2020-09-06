@@ -132,14 +132,11 @@ class User(AbstractBaseUser, PermissionsMixin):
         except ZeroDivisionError:
             return 0
 
-    def canceled_posts_count(self):
-        service = service_models.Service.objects.filter(requester=self, status='Canceled').count()
-        return service
-
     avg_rating.short_description = 'Average rating'
     rating_count.short_description = 'Rating count'
     avg_rating_last_ten.short_description = 'Last ten'
-    canceled_posts_count.short_description = 'Canceled posts'
+    canceled_posts = models.PositiveIntegerField(null=True, blank=True, default=0)
+    created_posts = models.PositiveIntegerField(null=True, blank=True, default=0)
 
 
 @receiver(reset_password_token_created)
