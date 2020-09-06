@@ -46,9 +46,17 @@ class RequestProvideServiceAdmin(admin.ModelAdmin):
         model = RequestProvideService
 
 
+class ProvideServiceImagesAdmin(admin.ModelAdmin):
+    list_display = [field.name for field in RequestProvideService._meta.fields]
+
+    class Meta:
+        model = ProvideServiceImage
+
+
 admin.site.register(Service, ServiceAdmin)
 admin.site.register(ServiceImage, ServiceImageAdmin)
 admin.site.register(RequestService, RequestServiceAdmin)
 admin.site.register(Support, SupportAdmin)
 admin.site.register(ProvideService, ProvideServiceAdmin)
+admin.site.register(ProvideServiceImage, ProvideServiceImageAdmin)
 admin.site.register(RequestProvideService, RequestProvideServiceAdmin)
