@@ -294,7 +294,7 @@ def pay_service_provide_points(sender, instance, created, **kwargs):
 
 
 @receiver(post_save, sender=ProvideService)
-def service_cancel_points(sender, instance, created, **kwargs):
+def provide_service_cancel_points(sender, instance, created, **kwargs):
     deadline = instance.deadline
     today = datetime.datetime.now().date()
     timer = deadline - today
@@ -323,7 +323,7 @@ def service_cancel_points(sender, instance, created, **kwargs):
 
 
 @receiver(post_save, sender=ProvideService)
-def service_expired(sender, instance, created, **kwargs):
+def provide_service_expired(sender, instance, created, **kwargs):
     deadline = instance.deadline
     today = datetime.datetime.now().date()
     timer = deadline - today
