@@ -236,6 +236,14 @@ class ProvideService(models.Model):
     def __str__(self):
         return str(self.title)
 
+    def save(self, *args, **kwargs):
+        deadline = self.deadline
+        today = datetime.datetime.now().date()
+        if deadline < today:
+            self.status = 'Expired'
+            super(ProvideService, self).save(*args, **kwargs)
+        super(ProvideService, self).save(*args, **kwargs)
+
 
 class ProvideServiceImage(models.Model):
     post = models.ForeignKey(ProvideService, default=None, on_delete=models.CASCADE,
@@ -303,7 +311,7 @@ def provide_service_cancel_points(sender, instance, created, **kwargs):
         instance.requester.points += 20
         instance.requester.save()
 
-    if instance.status == 'Canceled' and timer.days > 2:
+    if instance.status == 'Canceled' and timer.days < 2:
         if instance.requester is not None:
             instance.provider.points += 10
             instance.requester.points += 10
@@ -313,24 +321,13 @@ def provide_service_cancel_points(sender, instance, created, **kwargs):
             instance.provider.points += 20
             instance.provider.save()
 
-    if instance.status == 'Canceled' and timer.days < 2:
+    if instance.status == 'Canceled' and timer.days > 2:
         if instance.requester is not None:
             instance.requester.points += 20
             instance.requester.save()
         if instance.requester is None:
             instance.provider.points += 20
             instance.provider.save()
-
-
-@receiver(post_save, sender=ProvideService)
-def provide_service_expired(sender, instance, created, **kwargs):
-    deadline = instance.deadline
-    today = datetime.datetime.now().date()
-    timer = deadline - today
-    if timer.days < 0:
-        service = instance
-        service.status = 'Expired'
-        service.save()
 
 
 @receiver(post_save, sender=ProvideService)
@@ -351,7 +348,7 @@ def provide_service_cancel_notification(sender, instance, created, **kwargs):
         if instance.provider is not None:
             mail_subject = 'Status changed | Vrmates team'
             message = render_to_string('services/service_canceled.html', {
-                'user': instance.requester.first_name,
+                'user': instance.provider.first_name,
                 'title': instance.title,
                 'status': instance.status
             })
