@@ -1,5 +1,6 @@
 import datetime
 from django.db import models
+from django.db.models import UniqueConstraint
 from django.dispatch import receiver
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
@@ -56,7 +57,7 @@ class Service(models.Model):
         if self.requester and self.requester.points < 20:
             if self.is_checked:
                 super(Service, self).save(*args, **kwargs)
-            return "Not enough points"
+            raise TypeError('Not enough points.')
         else:
             super(Service, self).save(*args, **kwargs)
 
@@ -77,22 +78,15 @@ class RequestService(models.Model):
         ('Canceled', 'Canceled'),
     )
     requester = models.ForeignKey('users.User', on_delete=models.CASCADE, blank=True, null=True)
-    service = models.ForeignKey(Service, on_delete=models.CASCADE)
+    service = models.ForeignKey(Service, on_delete=models.CASCADE, blank=True, null=True)
     status = models.CharField(choices=STATUS, max_length=64, default='Pending')
     accept = models.BooleanField(default=False)
 
+    class Meta:
+        constraints = [UniqueConstraint(fields=['requester', 'service'], name='unique_request_service')]
+
     def __str__(self):
         return '%s' % self.service
-
-    def save(self, *args, **kwargs):
-        requester = self.requester
-        service = self.service
-        requests = RequestService.objects.filter(requester=requester, service=service)
-
-        if requests.exists():
-            return Exception('User already has request for this post')
-        else:
-            super(RequestService, self).save(*args, **kwargs)
 
 
 @receiver(post_save, sender=RequestService)
@@ -261,18 +255,11 @@ class RequestProvideService(models.Model):
     status = models.CharField(choices=STATUS, max_length=64, default='Pending')
     accept = models.BooleanField(default=False)
 
+    class Meta:
+        constraints = [UniqueConstraint(fields=['requester', 'service'], name='unique_request_provide_services')]
+
     def __str__(self):
         return str(self.service)
-
-    def save(self, *args, **kwargs):
-        requester = self.requester
-        service = self.service
-        requests = RequestProvideService.objects.filter(requester=requester, service=service)
-
-        if requests.exists():
-            return Exception('User already has request for this post')
-        else:
-            super(RequestProvideService, self).save(*args, **kwargs)
 
 
 @receiver(post_save, sender=RequestProvideService)
