@@ -302,19 +302,10 @@ def provide_service_cancel_points(sender, instance, created, **kwargs):
     today = datetime.datetime.now().date()
     timer = deadline - today
 
-    if instance.status == 'Canceled' and instance.provider is None:
+    if instance.status == 'Canceled' and instance.requester:
         instance.requester.points += 20
         instance.requester.save()
 
-    if instance.status == 'Canceled' and instance.provider is not None:
-        if timer.days > 2:
-            instance.requester.points += 10
-            instance.provider.points += 10
-            instance.requester.save()
-            instance.provider.save()
-        if timer.days < 2:
-            instance.provider.points += 20
-            instance.provider.save()
 
 
 @receiver(post_save, sender=ProvideService)
