@@ -48,6 +48,12 @@ class Service(models.Model):
         return str(self.title)
 
     def save(self, *args, **kwargs):
+        deadline = self.deadline
+        today = datetime.datetime.now().date()
+        if deadline < today:
+            self.status = 'Expired'
+            super(Service, self).save(*args, **kwargs)
+        super(Service, self).save(*args, **kwargs)
         if self.requester and self.requester.points < 20:
             if self.is_checked:
                 super(Service, self).save(*args, **kwargs)
@@ -78,6 +84,16 @@ class RequestService(models.Model):
 
     def __str__(self):
         return '%s' % self.service
+
+
+@receiver(post_save, sender=RequestService)
+def if_request_is_created(sender, instance, created, **kwargs):
+    requester = instance.requester
+    service = instance.service
+    requests = RequestService.objects.filter(requester=requester, service=service)
+
+    if requests.exists():
+        raise Exception('User already has request for this post!')
 
 
 @receiver(post_save, sender=RequestService)
@@ -127,7 +143,7 @@ def service_cancel_points(sender, instance, created, **kwargs):
         instance.requester.points += 20
         instance.requester.save()
 
-    if instance.status == 'Canceled' and timer.days > 2:
+    if instance.status == 'Canceled' and timer.days < 2:
         if instance.provider is not None:
             instance.requester.points += 10
             instance.provider.points += 10
@@ -137,24 +153,13 @@ def service_cancel_points(sender, instance, created, **kwargs):
             instance.requester.points += 20
             instance.requester.save()
 
-    if instance.status == 'Canceled' and timer.days < 2:
+    if instance.status == 'Canceled' and timer.days > 2:
         if instance.provider is not None:
             instance.provider.points += 20
             instance.provider.save()
         if instance.provider is None:
             instance.requester.points += 20
             instance.requester.save()
-
-
-@receiver(post_save, sender=Service)
-def service_expired(sender, instance, created, **kwargs):
-    deadline = instance.deadline
-    today = datetime.datetime.now().date()
-    timer = deadline - today
-    if timer.days < 0:
-        service = instance
-        service.status = 'Expired'
-        service.save()
 
 
 @receiver(post_save, sender=Service)
