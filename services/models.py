@@ -233,6 +233,8 @@ class ProvideService(models.Model):
         if deadline < today:
             self.status = 'Expired'
             super(ProvideService, self).save(*args, **kwargs)
+        else:
+            super(Service, self).save(*args, **kwargs)
 
 
 class ProvideServiceImage(models.Model):
