@@ -234,7 +234,7 @@ class ProvideService(models.Model):
             self.status = 'Expired'
             super(ProvideService, self).save(*args, **kwargs)
         else:
-            super(Service, self).save(*args, **kwargs)
+            super(ProvideService, self).save(*args, **kwargs)
 
 
 class ProvideServiceImage(models.Model):
