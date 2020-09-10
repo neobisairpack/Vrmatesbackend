@@ -85,15 +85,15 @@ class RequestService(models.Model):
     def __str__(self):
         return '%s' % self.service
 
+    def save(self, *args, **kwargs):
+        requester = self.requester
+        service = self.service
+        requests = RequestService.objects.filter(requester=requester, service=service)
 
-@receiver(post_save, sender=RequestService)
-def if_request_is_created(sender, instance, created, **kwargs):
-    requester = instance.requester
-    service = instance.service
-    requests = RequestService.objects.filter(requester=requester, service=service)
-
-    if requests.exists():
-        raise Exception('User already has request for this post!')
+        if requests.exists():
+            return Exception('User already has request for this post')
+        else:
+            super(RequestService, self).save(*args, **kwargs)
 
 
 @receiver(post_save, sender=RequestService)
@@ -272,6 +272,16 @@ class RequestProvideService(models.Model):
 
     def __str__(self):
         return str(self.service)
+
+    def save(self, *args, **kwargs):
+        requester = self.requester
+        service = self.service
+        requests = RequestProvideService.objects.filter(requester=requester, service=service)
+
+        if requests.exists():
+            return Exception('User already has request for this post')
+        else:
+            super(RequestProvideService, self).save(*args, **kwargs)
 
 
 @receiver(post_save, sender=RequestProvideService)
