@@ -53,7 +53,6 @@ class Service(models.Model):
         if deadline < today:
             self.status = 'Expired'
             super(Service, self).save(*args, **kwargs)
-        super(Service, self).save(*args, **kwargs)
         if self.requester and self.requester.points < 20:
             if self.is_checked:
                 super(Service, self).save(*args, **kwargs)
@@ -135,6 +134,7 @@ def pay_service_points(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=Service)
 def service_cancel_points(sender, instance, created, **kwargs):
+    print('ok')
     deadline = instance.deadline
     today = datetime.datetime.now().date()
     timer = deadline - today
@@ -143,23 +143,15 @@ def service_cancel_points(sender, instance, created, **kwargs):
         instance.requester.points += 20
         instance.requester.save()
 
-    if instance.status == 'Canceled' and timer.days < 2:
-        if instance.provider is not None:
+    if instance.status == 'Canceled' and instance.provider is not None:
+        if timer.days > 2:
             instance.requester.points += 10
             instance.provider.points += 10
             instance.requester.save()
             instance.provider.save()
-        if instance.provider is None:
-            instance.requester.points += 20
-            instance.requester.save()
-
-    if instance.status == 'Canceled' and timer.days > 2:
-        if instance.provider is not None:
+        if timer.days < 2:
             instance.provider.points += 20
             instance.provider.save()
-        if instance.provider is None:
-            instance.requester.points += 20
-            instance.requester.save()
 
 
 @receiver(post_save, sender=Service)
@@ -247,7 +239,6 @@ class ProvideService(models.Model):
         if deadline < today:
             self.status = 'Expired'
             super(ProvideService, self).save(*args, **kwargs)
-        super(ProvideService, self).save(*args, **kwargs)
 
 
 class ProvideServiceImage(models.Model):
@@ -326,21 +317,13 @@ def provide_service_cancel_points(sender, instance, created, **kwargs):
         instance.requester.points += 20
         instance.requester.save()
 
-    if instance.status == 'Canceled' and timer.days < 2:
-        if instance.requester is not None:
-            instance.provider.points += 10
+    if instance.status == 'Canceled' and instance.provider is not None:
+        if timer.days > 2:
             instance.requester.points += 10
-            instance.provider.save()
+            instance.provider.points += 10
             instance.requester.save()
-        if instance.requester is None:
-            instance.provider.points += 20
             instance.provider.save()
-
-    if instance.status == 'Canceled' and timer.days > 2:
-        if instance.requester is not None:
-            instance.requester.points += 20
-            instance.requester.save()
-        if instance.requester is None:
+        if timer.days < 2:
             instance.provider.points += 20
             instance.provider.save()
 
