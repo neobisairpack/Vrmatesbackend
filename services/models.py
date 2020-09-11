@@ -307,7 +307,6 @@ def provide_service_cancel_points(sender, instance, created, **kwargs):
         instance.requester.save()
 
 
-
 @receiver(post_save, sender=ProvideService)
 def provide_service_cancel_notification(sender, instance, created, **kwargs):
     if instance.status == 'Canceled':
