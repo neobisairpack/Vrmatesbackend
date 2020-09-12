@@ -1,7 +1,7 @@
 import datetime
 from django.db import models
-from django.db.models import UniqueConstraint
 from django.dispatch import receiver
+from django.db.models import UniqueConstraint
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.db.models.signals import post_save
@@ -275,7 +275,7 @@ def provide_service_status(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=ProvideService)
 def pull_service_provide_points(sender, instance, created, **kwargs):
-    if created and instance.status == 'Accepted/in process' and instance.requester:
+    if instance.status == 'Accepted/in process' and instance.requester:
         points = 20
         user = instance.requester
         user_points = user.points

@@ -4,13 +4,13 @@ import datetime
 from datetime import datetime, timedelta
 from django.db import models
 from django.conf import settings
+from django.dispatch import receiver
 from django.core.mail import EmailMessage
 from django.core.paginator import Paginator
+from django.template.loader import render_to_string
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db.models.signals import post_save
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
-from django.dispatch import receiver
-from django.template.loader import render_to_string
 
 from django.urls import reverse
 from django.core.mail import EmailMultiAlternatives
