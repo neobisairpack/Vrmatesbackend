@@ -1,6 +1,7 @@
 from django.http import HttpResponse, Http404, JsonResponse
 from django.core.mail import EmailMessage
 from django.contrib.auth import login
+from django.shortcuts import redirect
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from rest_framework import status, viewsets, generics
@@ -29,7 +30,7 @@ def activate(request, uid64, token):
         user.is_active = True
         user.save()
         login(request, user)
-        return HttpResponse('Thank you for confirm.')
+        return redirect('vrmates.co/confirm')
     else:
         return HttpResponse('The link is inactive')
 
