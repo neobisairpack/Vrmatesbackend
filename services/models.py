@@ -54,9 +54,9 @@ class Service(models.Model):
         if deadline < today:
             self.status = 'Expired'
             super(Service, self).save(*args, **kwargs)
-        if self.requester and self.requester.points < 20:
-            if self.is_checked:
-                super(Service, self).save(*args, **kwargs)
+        if self.is_checked:
+            super(Service, self).save(*args, **kwargs)
+        elif self.requester and self.requester.points < 20:
             raise TypeError('Not enough points.')
         else:
             super(Service, self).save(*args, **kwargs)
@@ -128,7 +128,6 @@ def pay_service_points(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=Service)
 def service_cancel_points(sender, instance, created, **kwargs):
-    print('ok')
     deadline = instance.deadline
     today = datetime.datetime.now().date()
     timer = deadline - today
