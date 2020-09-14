@@ -36,9 +36,6 @@ class ServiceSerializer(serializers.ModelSerializer, ExtraFieldsMixin):
             title=validated_data.get('title'),
             text=validated_data.get('text'),
         )
-
-        UsersWorkInService.objects.create(user=validated_data.get('requester'), service=post, is_requester=True)
-
         for image_data in images_data.values():
             ServiceImage.objects.create(post=post, image=image_data)
         return post
@@ -98,8 +95,7 @@ class ProvideServiceSerializer(serializers.ModelSerializer):
         extra_fields = ['images']
 
     def create(self, validated_data):
-        # images_data = self.context.get('view').request.FILES
-        # Вообще он должен быть в validated_data/ Зачем ты так делал?
+        images_data = self.context.get('view').request.FILES
         post = ProvideService.objects.create(
             provider=validated_data.get('provider'),
             requester=validated_data.get('requester'),
@@ -114,8 +110,8 @@ class ProvideServiceSerializer(serializers.ModelSerializer):
             title=validated_data.get('title'),
             text=validated_data.get('text'),
         )
-        # for image_data in images_data.values():
-        #     ProvideServiceImage.objects.create(post=post, image=image_data)
+        for image_data in images_data.values():
+            ProvideServiceImage.objects.create(post=post, image=image_data)
         return post
 
 
