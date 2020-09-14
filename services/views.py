@@ -311,6 +311,11 @@ class ServiceFilterListAPIView(ListAPIView):
         'pickup_location', 'drop_off_location'
     ]
 
+    def get(self, request, *args, **kwargs):
+        service = self.queryset.all()
+        serializer = ServiceReadableSerializer(service, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 class ProvideServiceFilterListAPIView(ListAPIView):
     queryset = ProvideService.objects.filter(is_checked=True)

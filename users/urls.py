@@ -1,6 +1,6 @@
 from django.conf.urls import url
 from django.urls import path, include
-from rest_framework import routers
+from django_rest_passwordreset import views
 
 from .views import *
 
