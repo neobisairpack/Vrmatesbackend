@@ -1,4 +1,5 @@
 from django.http import Http404
+from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, status
 from rest_framework.filters import SearchFilter
@@ -20,7 +21,7 @@ class ServiceViewSet(viewsets.ModelViewSet):
         serializer = ServiceReadableSerializer(service, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def post(self, request):
+    def create(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -28,7 +29,39 @@ class ServiceViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(requester=self.request.user)
+    
+    def update(self, request, *args, **kwargs):
+        partial = True
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        import datetime
+        user = request.user
+        service = get_object_or_404(Service, id=request.data.get('id'))
 
+        if is_provider(user, service):
+            if service.status == 'Canceled' and service.provider is None:
+                service.requester.points += 20
+                service.requester.save()
+
+        elif is_requester(user, service):
+            if service.status == 'Canceled':
+                deadline = service.deadline
+                today = datetime.datetime.now().date()
+                timer = deadline - today
+
+                if service.status == 'Canceled' and service.provider is not None:
+                    if timer.days > 2:
+                        service.requester.points += 10
+                        service.provider.points += 10
+                        service.requester.save()
+                        service.provider.save()
+                    if timer.days < 2:
+                        service.provider.points += 20
+                        service.provider.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
     def delete(self, request):
         pk = request.data.get('id', None)
         if pk is None:
@@ -141,12 +174,13 @@ class ProvideServiceViewSet(viewsets.ModelViewSet):
     queryset = ProvideService.objects.filter(is_checked=True)
     serializer_class = ProvideServiceSerializer
 
-    def list(self, request, *args, **kwargs):
+    def list(self, request, pk=None, *args, **kwargs):
         service = self.queryset.all()
         serializer = ProvideServiceReadableSerializer(service, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def post(self, request):
+    def create(self, request, *args, **kwargs):
+
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()

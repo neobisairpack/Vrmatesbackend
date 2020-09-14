@@ -77,7 +77,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_superuser = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
+    is_requester = models.BooleanField(default=False)
+    is_provider = models.BooleanField(default=False)
+    # Так можно сделать. В рринципе не обязательно, но желательно, думаю
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', ]
 
