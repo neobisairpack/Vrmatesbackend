@@ -56,28 +56,9 @@ def pay_service_points(sender, instance, created, **kwargs):
 @receiver(post_save, sender=Service)
 def user_service_role_check(sender, instance, created, **kwargs):
     if created:
-        UsersWorkInService.objects.create(
+        UsersWorkInProvideService.objects.create(
             user=instance.requester, service=instance, is_provider=False, is_requester=True
         )
-# @receiver(post_save, sender=Service)
-# def service_cancel_points(sender, instance, created, **kwargs):
-#     deadline = instance.deadline
-#     today = datetime.now().date()
-#     timer = deadline - today
-#
-#     if instance.status == 'Canceled' and instance.provider is None:
-#         instance.requester.points += 20
-#         instance.requester.save()
-#
-#     if instance.status == 'Canceled' and instance.provider is not None:
-#         if timer.days > 2:
-#             instance.requester.points += 10
-#             instance.provider.points += 10
-#             instance.requester.save()
-#             instance.provider.save()
-#         if timer.days < 2:
-#             instance.provider.points += 20
-#             instance.provider.save()
 
 
 @receiver(post_save, sender=Service)
@@ -139,6 +120,14 @@ def service_cancel_notification(sender, instance, created, **kwargs):
 
 
 @receiver(post_save, sender=RequestProvideService)
+def user_request_service_role_check(sender, instance, created, **kwargs):
+    if instance.status == 'Accepted':
+        UsersWorkInProvideService.objects.create(
+            user=instance.requester, service=instance.service, is_provider=False, is_requester=True
+        )
+
+
+@receiver(post_save, sender=RequestProvideService)
 def provide_service_status(sender, instance, created, **kwargs):
     if instance.status == 'Accepted' or instance.accept:
         status = 'Accepted/in process'
@@ -146,6 +135,14 @@ def provide_service_status(sender, instance, created, **kwargs):
         service.status = status
         service.requester = instance.requester
         service.save()
+
+
+@receiver(post_save, sender=ProvideService)
+def user_service_role_check(sender, instance, created, **kwargs):
+    if created:
+        UsersWorkInProvideService.objects.create(
+            user=instance.provider, service=instance, is_provider=True, is_requester=False
+        )
 
 
 @receiver(post_save, sender=ProvideService)
@@ -168,17 +165,6 @@ def pay_service_provide_points(sender, instance, created, **kwargs):
         user_points += points
         user.points = user_points
         user.save()
-
-
-@receiver(post_save, sender=ProvideService)
-def provide_service_cancel_points(sender, instance, created, **kwargs):
-    deadline = instance.deadline
-    today = datetime.now().date()
-    timer = deadline - today
-
-    if instance.status == 'Canceled' and instance.requester:
-        instance.requester.points += 20
-        instance.requester.save()
 
 
 @receiver(post_save, sender=ProvideService)

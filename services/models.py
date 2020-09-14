@@ -173,11 +173,9 @@ class RequestProvideService(models.Model):
 
 
 class UsersWorkInService(models.Model):
-    """Модель показывает, кем является юзер в конкретном запросе на услугу"""
-
+    """Model shows user's role."""
     user = models.ForeignKey('users.User', on_delete=models.CASCADE)
     service = models.ForeignKey('services.Service', on_delete=models.CASCADE, related_name='workers')
-
     is_provider = models.BooleanField(default=False)
     is_requester = models.BooleanField(default=False)
 
@@ -200,4 +198,33 @@ def is_requester(user, service) -> bool:
         work = UsersWorkInService.objects.get(user=user, service=service)
         return work.is_requester
     except UsersWorkInService.DoesNotExist:
+        raise TypeError('Requester does not exist.')
+
+
+class UsersWorkInProvideService(models.Model):
+    """Model shows user's role."""
+    user = models.ForeignKey('users.User', on_delete=models.CASCADE)
+    service = models.ForeignKey('services.ProvideService', on_delete=models.CASCADE, related_name='provide_workers')
+    is_provider = models.BooleanField(default=False)
+    is_requester = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = ['user', 'service']
+
+
+def is_service_provider(user, service) -> bool:
+    """check if user provider"""
+    try:
+        work = UsersWorkInProvideService.objects.get(user=user, service=service)
+        return work.is_provider
+    except UsersWorkInProvideService.DoesNotExist:
+        raise TypeError('Provider does not exist.')
+
+
+def is_service_requester(user, service) -> bool:
+    """check if user requester"""
+    try:
+        work = UsersWorkInProvideService.objects.get(user=user, service=service)
+        return work.is_requester
+    except UsersWorkInProvideService.DoesNotExist:
         raise TypeError('Requester does not exist.')

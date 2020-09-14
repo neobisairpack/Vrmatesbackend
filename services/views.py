@@ -189,6 +189,38 @@ class ProvideServiceViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(provider=self.request.user)
 
+    def update(self, request, *args, **kwargs):
+        partial = True
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        import datetime
+        user = request.user
+        service = get_object_or_404(ProvideService, id=request.data.get('id'))
+
+        if is_service_provider(user, service):
+            if service.status == 'Canceled' and service.provider is None:
+                service.requester.points += 20
+                service.requester.save()
+
+        elif is_service_requester(user, service):
+            if service.status == 'Canceled':
+                deadline = service.deadline
+                today = datetime.datetime.now().date()
+                timer = deadline - today
+
+                if service.status == 'Canceled' and service.provider is not None:
+                    if timer.days > 2:
+                        service.requester.points += 10
+                        service.provider.points += 10
+                        service.requester.save()
+                        service.provider.save()
+                    if timer.days < 2:
+                        service.provider.points += 20
+                        service.provider.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
     def delete(self, request):
         pk = request.data.get('id', None)
         if pk is None:

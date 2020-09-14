@@ -60,6 +60,13 @@ class UserWorkInServiceAdmin(admin.ModelAdmin):
         model = UsersWorkInService
 
 
+class UserWorkInProvideServiceAdmin(admin.ModelAdmin):
+    list_display = [field.name for field in UsersWorkInProvideService._meta.fields]
+
+    class Meta:
+        model = UsersWorkInProvideService
+
+
 admin.site.register(Service, ServiceAdmin)
 admin.site.register(ServiceImage, ServiceImageAdmin)
 admin.site.register(RequestService, RequestServiceAdmin)
@@ -68,3 +75,4 @@ admin.site.register(ProvideService, ProvideServiceAdmin)
 admin.site.register(ProvideServiceImage, ProvideServiceImagesAdmin)
 admin.site.register(RequestProvideService, RequestProvideServiceAdmin)
 admin.site.register(UsersWorkInService, UserWorkInServiceAdmin)
+admin.site.register(UsersWorkInProvideService, UserWorkInProvideServiceAdmin)
