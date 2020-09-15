@@ -174,7 +174,6 @@ class ProvideServiceViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def create(self, request, *args, **kwargs):
-
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -305,10 +304,10 @@ class ServiceFilterListAPIView(ListAPIView):
         'pickup_location', 'drop_off_location'
     ]
 
-    def get(self, request, *args, **kwargs):
-        service = self.queryset.all()
-        serializer = self.serializer_class(service, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    # def get(self, request, *args, **kwargs):
+    #     service = self.queryset.all()
+    #     serializer = self.serializer_class(service, many=True)
+    #     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class ProvideServiceFilterListAPIView(ListAPIView):
@@ -324,10 +323,10 @@ class ProvideServiceFilterListAPIView(ListAPIView):
         'pickup_location', 'drop_off_location'
     ]
 
-    def get(self, request, *args, **kwargs):
-        service = self.queryset.all()
-        serializer = self.serializer_class(service, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    # def get(self, request, *args, **kwargs):
+    #     service = self.queryset.all()
+    #     serializer = self.serializer_class(service, many=True)
+    #     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class SupportFilterListAPIView(ListAPIView):
