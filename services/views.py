@@ -317,7 +317,8 @@ class ProvideServiceFilterListAPIView(ListAPIView):
     ]
 
     def get(self, request, *args, **kwargs):
-        serializer = self.serializer_class()
+        service = self.queryset
+        serializer = self.serializer_class(service)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
