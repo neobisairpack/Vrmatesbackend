@@ -116,7 +116,7 @@ class RequestServiceViewSet(viewsets.ModelViewSet):
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
+        serializer.save(reqeuster=self.request.user)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def delete(self, request):
@@ -178,9 +178,6 @@ class ProvideServiceViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save(requester=self.request.user)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    def perform_create(self, serializer):
-        serializer.save(provider=self.request.user)
 
     def update(self, request, *args, **kwargs):
         partial = True
@@ -271,11 +268,8 @@ class RequestProvideServiceViewSet(viewsets.ModelViewSet):
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
+        serializer.save(reqeuster=self.request.user)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    def perform_create(self, serializer):
-        serializer.save(requester=self.request.user)
 
     def delete(self, request):
         pk = request.data.get('id', None)
