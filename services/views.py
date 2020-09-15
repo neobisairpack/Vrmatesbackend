@@ -24,11 +24,8 @@ class ServiceViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    def perform_create(self, serializer):
         serializer.save(requester=self.request.user)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
     
     def update(self, request, *args, **kwargs):
         partial = True
@@ -81,9 +78,9 @@ class ServiceImageViewSet(viewsets.ModelViewSet):
     queryset = ServiceImage.objects.all()
     serializer_class = ServiceImagesSerializer
 
-    def get(self, request):
+    def get(self):
         image = self.queryset.all()
-        serializer = self.serializer_class(image, data=request.DATA, files=request.FILES)
+        serializer = self.serializer_class(image, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
@@ -119,11 +116,8 @@ class RequestServiceViewSet(viewsets.ModelViewSet):
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    def perform_create(self, serializer):
         serializer.save(requester=self.request.user)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def delete(self, request):
         pk = request.data.get('id', None)

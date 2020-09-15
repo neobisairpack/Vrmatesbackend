@@ -3,7 +3,6 @@ from rest_framework import serializers
 from .models import *
 from .mixins import ExtraFieldsMixin
 from users.serializers import UserSerializer
-from services.models import UsersWorkInService
 
 
 class ServiceImagesSerializer(serializers.ModelSerializer):
@@ -22,10 +21,24 @@ class ServiceSerializer(serializers.ModelSerializer, ExtraFieldsMixin):
                   'status', 'title', 'text', 'is_checked', 'provider', 'images']
 
     # def create(self, validated_data):
-    #     image_data = validated_data.pop('images')
-    #     service = Service.objects.create(**validated_data)
-    #     ServiceImage.objects.create(post=service, **image_data)
-    #     return service
+    #     images_data = self.context.get('view').request.FILES
+    #     post = ProvideService.objects.create(
+    #         provider=validated_data.get('provider'),
+    #         requester=validated_data.get('requester'),
+    #         provider_from=validated_data.get('provider_from'),
+    #         service_type=validated_data.get('service_type'),
+    #         country=validated_data.get('country'),
+    #         preferences=validated_data.get('preferences'),
+    #         pickup_location=validated_data.get('pickup_location'),
+    #         drop_off_location=validated_data.get('drop_off_location'),
+    #         deadline=validated_data.get('deadline'),
+    #         status=validated_data.get('status'),
+    #         title=validated_data.get('title'),
+    #         text=validated_data.get('text'),
+    #     )
+    #     for image_data in images_data.values():
+    #         ProvideServiceImage.objects.create(post=post, image=image_data)
+    #     return post
 
 
 class ServiceReadableSerializer(serializers.ModelSerializer):
