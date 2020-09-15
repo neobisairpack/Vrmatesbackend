@@ -298,11 +298,6 @@ class ServiceFilterListAPIView(ListAPIView):
         'pickup_location', 'drop_off_location'
     ]
 
-    def get(self, request, *args, **kwargs):
-        service = self.queryset
-        serializer = self.serializer_class(service)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
 
 class ProvideServiceFilterListAPIView(ListAPIView):
     queryset = ProvideService.objects.filter(is_checked=True)
@@ -316,11 +311,6 @@ class ProvideServiceFilterListAPIView(ListAPIView):
         'country', 'status', 'deadline', 'service_type',
         'pickup_location', 'drop_off_location'
     ]
-
-    def get(self, request, *args, **kwargs):
-        service = self.queryset
-        serializer = self.serializer_class(service)
-        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class SupportFilterListAPIView(ListAPIView):
