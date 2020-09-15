@@ -10,6 +10,10 @@ class ServiceImagesSerializer(serializers.ModelSerializer):
         model = ServiceImage
         fields = '__all__'
 
+    def get_image_url(self, obj):
+        request = self.context.get("request")
+        return request.build_absolute_uri(obj.image.url)
+
 
 class ServiceSerializer(serializers.ModelSerializer, ExtraFieldsMixin):
     images = ServiceImagesSerializer(many=True, required=False)
