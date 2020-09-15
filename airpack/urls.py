@@ -23,9 +23,9 @@ urlpatterns = [
     url(r'^', include('django.contrib.auth.urls')),
     url(r'^jet/', include('jet.urls', 'jet')),
     url(r'^jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),
-    path('/admin/', admin.site.urls),
+    path('admin/', admin.site.urls),
     path('', include('users.urls')),
-    path('/api/', include('services.urls')),
-    path('/api/auth/', include('rest_framework.urls')),
-    path('/users/rest-auth/', include('rest_auth.urls'))
+    path('api/', include('services.urls')),
+    path('api/auth/', include('rest_framework.urls')),
+    path('users/rest-auth/', include('rest_auth.urls'))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
