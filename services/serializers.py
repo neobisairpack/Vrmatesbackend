@@ -21,17 +21,11 @@ class ServiceSerializer(serializers.ModelSerializer, ExtraFieldsMixin):
                   'pickup_location', 'drop_off_location', 'arrive_date', 'deadline',
                   'status', 'title', 'text', 'is_checked', 'provider', 'images']
 
-    def create(self, validated_data):
-        images_data = validated_data.pop('images')
-        service = Service.objects.create(**validated_data)
-        images_list = []
-        for image_data in images_data:
-            images_list.append(ServiceImage.objects.create(
-                service=service.id,
-                **image_data
-            ))
-        service.save()
-        return service
+    # def create(self, validated_data):
+    #     image_data = validated_data.pop('images')
+    #     service = Service.objects.create(**validated_data)
+    #     ServiceImage.objects.create(post=service, **image_data)
+    #     return service
 
 
 class ServiceReadableSerializer(serializers.ModelSerializer):

@@ -81,9 +81,9 @@ class ServiceImageViewSet(viewsets.ModelViewSet):
     queryset = ServiceImage.objects.all()
     serializer_class = ServiceImagesSerializer
 
-    def get(self):
+    def get(self, request):
         image = self.queryset.all()
-        serializer = self.serializer_class(image, many=True)
+        serializer = self.serializer_class(image, data=request.DATA, files=request.FILES)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
