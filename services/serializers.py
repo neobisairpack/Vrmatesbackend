@@ -6,9 +6,11 @@ from users.serializers import UserSerializer
 
 
 class ServiceImagesSerializer(serializers.ModelSerializer):
+    image_url = serializers.SerializerMethodField('get_image_url')
+
     class Meta:
         model = ServiceImage
-        fields = '__all__'
+        fields = ['id', 'post', 'image', 'image_url']
 
     def get_image_url(self, obj):
         request = self.context.get("request")
