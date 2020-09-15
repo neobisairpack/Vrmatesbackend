@@ -30,7 +30,7 @@ def activate(request, uid64, token):
         user.is_active = True
         user.save()
         login(request, user)
-        return redirect('vrmates.co/confirm')
+        return redirect('https://www.vrmates.co/confirm')
     else:
         return HttpResponse('The link is inactive')
 
