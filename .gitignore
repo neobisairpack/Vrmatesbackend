@@ -11,6 +11,7 @@ __pycache__/
 
 # staticfiles
 staticfiles/
+back_static/
 
 # Distribution / packaging
 .Python
