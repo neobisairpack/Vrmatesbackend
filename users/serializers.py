@@ -66,7 +66,6 @@ class RegistrationSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'first_name', 'last_name', 'username', 'email', 'birthday', 'gender', 'phone', 'about_me',
             'image', 'address', 'zip_code', 'country', 'city', 'state', 'password', 'password2', 'token',
-            'canceled_posts', 'created_posts'
         ]
         extra_kwargs = {
             'password': {'write_only': True}

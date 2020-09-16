@@ -12,11 +12,8 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db.models.signals import post_save
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 
-from django.urls import reverse
 from django.core.mail import EmailMultiAlternatives
 from django_rest_passwordreset.signals import reset_password_token_created
-
-from services import models as service_models
 
 
 class MyUserManager(BaseUserManager):
@@ -77,9 +74,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_superuser = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    is_requester = models.BooleanField(default=False)
-    is_provider = models.BooleanField(default=False)
-    # Так можно сделать. В рринципе не обязательно, но желательно, думаю
+
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', ]
 
