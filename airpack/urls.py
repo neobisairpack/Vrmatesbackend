@@ -24,7 +24,7 @@ urlpatterns = [
     url(r'^backend/jet/', include('jet.urls', 'jet')),
     url(r'^backend/jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),
     path('backend/admin/', admin.site.urls),
-    path('backend/', include('users.urls')),
+    path('', include('users.urls')),
     path('backend/api/', include('services.urls')),
     path('backend/api/auth/', include('rest_framework.urls')),
     path('backend/users/rest-auth/', include('rest_auth.urls'))
