@@ -83,7 +83,7 @@ class ServiceImageViewSet(viewsets.ModelViewSet):
         serializer = self.serializer_class(image, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def post(self, request):
+    def create(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -113,7 +113,7 @@ class RequestServiceViewSet(viewsets.ModelViewSet):
         serializer = RequestServiceReadableSerializer(service, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def post(self, request):
+    def create(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save(requester=self.request.user)
@@ -143,7 +143,7 @@ class SupportViewSet(viewsets.ModelViewSet):
         serializer = self.serializer_class(support, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def post(self, request):
+    def create(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -235,7 +235,7 @@ class ProvideServiceImageViewSet(viewsets.ModelViewSet):
         serializer = self.serializer_class(image, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def post(self, request):
+    def create(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -265,7 +265,7 @@ class RequestProvideServiceViewSet(viewsets.ModelViewSet):
         serializer = RequestProvideServiceReadableSerializer(service, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def post(self, request):
+    def create(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save(requester=self.request.user)
