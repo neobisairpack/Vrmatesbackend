@@ -86,9 +86,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
             city=self.validated_data['city'],
             state=self.validated_data['state'],
             about_me=self.validated_data['about_me'],
-            image=self.validated_data['image'],
-            canceled_posts=self.validated_data['canceled_posts'],
-            created_posts=self.validated_data['created_posts']
+            image=self.validated_data['image']
         )
         password = self.validated_data['password']
         password2 = self.validated_data['password2']
