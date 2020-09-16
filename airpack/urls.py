@@ -20,7 +20,7 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
-    url(r'^', include('django.contrib.auth.urls')),
+    url(r'^backend/', include('django.contrib.auth.urls')),
     url(r'^backend/jet/', include('jet.urls', 'jet')),
     url(r'^backend/jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),
     path('backend/admin/', admin.site.urls),
