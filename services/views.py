@@ -38,25 +38,24 @@ class ServiceViewSet(viewsets.ModelViewSet):
         service = get_object_or_404(Service, id=request.data.get('id'))
 
         if is_provider(user, service):
-            if service.status == 'Canceled' and service.provider is None:
+            if service.status == 'Canceled':
                 service.requester.points += 20
                 service.requester.save()
 
         elif is_requester(user, service):
-            if service.status == 'Canceled':
-                deadline = service.deadline
-                today = datetime.datetime.now().date()
-                timer = deadline - today
+            deadline = service.deadline
+            today = datetime.datetime.now().date()
+            timer = deadline - today
 
-                if service.status == 'Canceled' and service.provider is not None:
-                    if timer.days > 2:
-                        service.requester.points += 10
-                        service.provider.points += 10
-                        service.requester.save()
-                        service.provider.save()
-                    if timer.days < 2:
-                        service.provider.points += 20
-                        service.provider.save()
+            if service.status == 'Canceled':
+                if timer.days > 2:
+                    service.requester.points += 10
+                    service.provider.points += 10
+                    service.requester.save()
+                    service.provider.save()
+                if timer.days < 2:
+                    service.provider.points += 20
+                    service.provider.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     def delete(self, request):

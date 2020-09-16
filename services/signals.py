@@ -1,19 +1,9 @@
-from datetime import datetime
-
 from django.dispatch import receiver
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.db.models.signals import post_save
 
 from services.models import *
-
-
-@receiver(post_save, sender=RequestService)
-def user_request_service_role_check(sender, instance, created, **kwargs):
-    if instance.status == 'Accepted':
-        UsersWorkInService.objects.create(
-            user=instance.requester, service=instance.service, is_provider=True, is_requester=False
-        )
 
 
 @receiver(post_save, sender=RequestService)
@@ -24,6 +14,14 @@ def service_status(sender, instance, created, **kwargs):
         service.status = status
         service.provider = instance.requester
         service.save()
+
+
+@receiver(post_save, sender=RequestService)
+def user_request_service_create_role_check(sender, instance, created, **kwargs):
+    if instance.status == 'Accepted':
+        UsersWorkInService.objects.create(
+            user=instance.requester, service=instance.service, is_provider=True, is_requester=False
+        )
 
 
 @receiver(post_save, sender=Service)
@@ -121,6 +119,7 @@ def service_cancel_notification(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=RequestProvideService)
 def user_request_service_role_check(sender, instance, created, **kwargs):
+    print('ok')
     if instance.status == 'Accepted':
         UsersWorkInProvideService.objects.create(
             user=instance.requester, service=instance.service, is_provider=False, is_requester=True
