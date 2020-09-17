@@ -118,7 +118,7 @@ def service_cancel_notification(sender, instance, created, **kwargs):
 
 
 @receiver(post_save, sender=RequestProvideService)
-def user_request_service_provide_role_check(sender, instance, created, **kwargs):
+def user_service_provider_creation(sender, instance, created, **kwargs):
     if instance.status == 'Accepted':
         UsersWorkInProvideService.objects.create(
             user=instance.requester, service=instance.service, is_provider=False, is_requester=True
