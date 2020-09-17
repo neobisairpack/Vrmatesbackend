@@ -52,9 +52,9 @@ def pay_service_points(sender, instance, created, **kwargs):
 
 
 @receiver(post_save, sender=Service)
-def user_service_role_check(sender, instance, created, **kwargs):
+def user_service_requester_role_check(sender, instance, created, **kwargs):
     if created:
-        UsersWorkInProvideService.objects.create(
+        UsersWorkInService.objects.create(
             user=instance.requester, service=instance, is_provider=False, is_requester=True
         )
 
@@ -118,8 +118,7 @@ def service_cancel_notification(sender, instance, created, **kwargs):
 
 
 @receiver(post_save, sender=RequestProvideService)
-def user_request_service_role_check(sender, instance, created, **kwargs):
-    print('ok')
+def user_request_service_provide_role_check(sender, instance, created, **kwargs):
     if instance.status == 'Accepted':
         UsersWorkInProvideService.objects.create(
             user=instance.requester, service=instance.service, is_provider=False, is_requester=True
@@ -137,7 +136,7 @@ def provide_service_status(sender, instance, created, **kwargs):
 
 
 @receiver(post_save, sender=ProvideService)
-def user_service_role_check(sender, instance, created, **kwargs):
+def user_service_provide_requester_role_check(sender, instance, created, **kwargs):
     if created:
         UsersWorkInProvideService.objects.create(
             user=instance.provider, service=instance, is_provider=True, is_requester=False

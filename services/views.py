@@ -38,6 +38,7 @@ class ServiceViewSet(viewsets.ModelViewSet):
         service = get_object_or_404(Service, id=request.data.get('id'))
 
         if is_provider(user, service):
+            print('ok')
             if service.status == 'Canceled':
                 service.requester.points += 20
                 service.requester.save()
