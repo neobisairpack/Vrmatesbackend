@@ -12,7 +12,7 @@ class ServiceImagesSerializer(serializers.ModelSerializer):
 
 
 class ServiceSerializer(serializers.ModelSerializer, ExtraFieldsMixin):
-    images = ServiceImagesSerializer(many=True)
+    images = ServiceImagesSerializer(many=True, required=False)
 
     class Meta:
         model = Service
@@ -23,12 +23,7 @@ class ServiceSerializer(serializers.ModelSerializer, ExtraFieldsMixin):
     def create(self, validated_data):
         images_data = validated_data.pop('images')
         post = Service.objects.create(**validated_data)
-        images_list = []
-        for images_details in images_data:
-            images_list.append(
-                ServiceImage.object.create(post=post, **images_details)
-            )
-        post.save()
+        ServiceImage.objects.create(post=post, **images_data)
         return post
     # def create(self, validated_data):
     #     images_data = self.context.get('view').request.FILES
