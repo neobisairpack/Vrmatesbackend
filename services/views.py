@@ -22,7 +22,7 @@ class ServiceViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def create(self, request, *args, **kwargs):
-        serializer = self.serializer_class(data=request.data)
+        serializer = self.serializer_class(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
         serializer.save(requester=self.request.user)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -190,7 +190,7 @@ class ProvideServiceViewSet(viewsets.ModelViewSet):
         service = get_object_or_404(ProvideService, id=request.data.get('id'))
 
         if is_service_provider(user, service):
-            if service.status == 'Canceled' and service.provider is None:
+            if service.status == 'Canceled':
                 service.requester.points += 20
                 service.requester.save()
 
@@ -200,7 +200,7 @@ class ProvideServiceViewSet(viewsets.ModelViewSet):
                 today = datetime.datetime.now().date()
                 timer = deadline - today
 
-                if service.status == 'Canceled' and service.provider is not None:
+                if service.status == 'Canceled':
                     if timer.days > 2:
                         service.requester.points += 10
                         service.provider.points += 10
