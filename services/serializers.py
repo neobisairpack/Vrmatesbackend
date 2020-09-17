@@ -38,13 +38,14 @@ class ServiceSerializer(serializers.ModelSerializer, ExtraFieldsMixin):
             preferences=validated_data.get('preferences'),
             pickup_location=validated_data.get('pickup_location'),
             drop_off_location=validated_data.get('drop_off_location'),
+            arrive_date=validated_data.get('arrive_date'),
             deadline=validated_data.get('deadline'),
             status=validated_data.get('status'),
             title=validated_data.get('title'),
             text=validated_data.get('text'),
         )
         for image_data in images_data.values():
-            ProvideServiceImage.objects.create(post=post, image=image_data)
+            ServiceImage.objects.create(post=post, image=image_data)
         return post
 
 
