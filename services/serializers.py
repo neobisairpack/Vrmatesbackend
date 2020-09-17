@@ -12,7 +12,7 @@ class ServiceImagesSerializer(serializers.ModelSerializer):
 
 
 class ServiceSerializer(serializers.ModelSerializer, ExtraFieldsMixin):
-    images = ServiceImagesSerializer(many=True, required=False)
+    images = ServiceImagesSerializer(many=True)
 
     class Meta:
         model = Service
@@ -20,6 +20,16 @@ class ServiceSerializer(serializers.ModelSerializer, ExtraFieldsMixin):
                   'pickup_location', 'drop_off_location', 'arrive_date', 'deadline',
                   'status', 'title', 'text', 'is_checked', 'provider', 'images']
 
+    def create(self, validated_data):
+        images_data = validated_data.pop('images')
+        post = Service.objects.create(**validated_data)
+        images_list = []
+        for images_details in images_data:
+            images_list.append(
+                ServiceImage.object.create(post=post, **images_details)
+            )
+        post.save()
+        return post
     # def create(self, validated_data):
     #     images_data = self.context.get('view').request.FILES
     #     post = ProvideService.objects.create(
@@ -94,25 +104,25 @@ class ProvideServiceSerializer(serializers.ModelSerializer):
                   'status', 'title', 'text', 'is_checked', 'provider', 'images']
         extra_fields = ['images']
 
-    # def create(self, validated_data):
-    #     images_data = self.context.get('view').request.FILES
-    #     post = ProvideService.objects.create(
-    #         provider=validated_data.get('provider'),
-    #         requester=validated_data.get('requester'),
-    #         provider_from=validated_data.get('provider_from'),
-    #         service_type=validated_data.get('service_type'),
-    #         country=validated_data.get('country'),
-    #         preferences=validated_data.get('preferences'),
-    #         pickup_location=validated_data.get('pickup_location'),
-    #         drop_off_location=validated_data.get('drop_off_location'),
-    #         deadline=validated_data.get('deadline'),
-    #         status=validated_data.get('status'),
-    #         title=validated_data.get('title'),
-    #         text=validated_data.get('text'),
-    #     )
-    #     for image_data in images_data.values():
-    #         ProvideServiceImage.objects.create(post=post, image=image_data)
-    #     return post
+    def create(self, validated_data):
+        images_data = self.context.get('view').request.FILES
+        post = ProvideService.objects.create(
+            provider=validated_data.get('provider'),
+            requester=validated_data.get('requester'),
+            provider_from=validated_data.get('provider_from'),
+            service_type=validated_data.get('service_type'),
+            country=validated_data.get('country'),
+            preferences=validated_data.get('preferences'),
+            pickup_location=validated_data.get('pickup_location'),
+            drop_off_location=validated_data.get('drop_off_location'),
+            deadline=validated_data.get('deadline'),
+            status=validated_data.get('status'),
+            title=validated_data.get('title'),
+            text=validated_data.get('text'),
+        )
+        for image_data in images_data.values():
+            ProvideServiceImage.objects.create(post=post, image=image_data)
+        return post
 
 
 class ProvideServiceReadableSerializer(serializers.ModelSerializer):

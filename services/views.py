@@ -14,7 +14,7 @@ from .serializers import *
 class ServiceViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated, )
     queryset = Service.objects.filter(is_checked=True)
-    serializer_class = ServiceReadableSerializer
+    serializer_class = ServiceSerializer
 
     def list(self, request, *args, **kwargs):
         service = self.queryset.all()
@@ -22,7 +22,7 @@ class ServiceViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def create(self, request, *args, **kwargs):
-        serializer = ServiceSerializer(data=request.data)
+        serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save(requester=self.request.user)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
