@@ -141,6 +141,9 @@ def user_service_provide_requester_role_check(sender, instance, created, **kwarg
         UsersWorkInProvideService.objects.create(
             user=instance.provider, service=instance, is_provider=True, is_requester=False
         )
+        provider = instance.provider
+        provider.created_posts += 1
+        provider.save()
 
 
 @receiver(post_save, sender=ProvideService)
