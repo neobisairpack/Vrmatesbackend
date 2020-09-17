@@ -174,7 +174,7 @@ class ProvideServiceViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def create(self, request, *args, **kwargs):
-        serializer = self.serializer_class(data=request.data)
+        serializer = self.serializer_class(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
         serializer.save(provider=self.request.user)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
