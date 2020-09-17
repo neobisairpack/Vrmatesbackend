@@ -20,14 +20,16 @@ class ServiceSerializer(serializers.ModelSerializer, ExtraFieldsMixin):
                   'pickup_location', 'drop_off_location', 'arrive_date', 'deadline',
                   'status', 'title', 'text', 'is_checked', 'provider', 'images']
 
-    def create(self, validated_data):
-        images_data = validated_data.pop('images')
-        post = Service.objects.create(**validated_data)
-        ServiceImage.objects.create(post=post, **images_data)
-        return post
+    # def create(self, validated_data):
+    #     images_data = validated_data.pop('images')
+    #     post = Service.objects.create(**validated_data)
+    #     ServiceImage.objects.create(post=post, **images_data)
+    #     return post
+
     # def create(self, validated_data):
     #     images_data = self.context.get('view').request.FILES
-    #     post = ProvideService.objects.create(
+    #     # post = Service.objects.create(**validated_data)
+    #     post = Service.objects.create(
     #         provider=validated_data.get('provider'),
     #         requester=validated_data.get('requester'),
     #         provider_from=validated_data.get('provider_from'),
